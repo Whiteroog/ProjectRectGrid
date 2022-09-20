@@ -10,7 +10,7 @@ namespace GameGrid.Source.Tiles
 
         public override Vector3Int Coordinate
         {
-            protected set
+            set
             {
                 base.Coordinate = value;
                 coordText.text = $"{value.x}     {value.y}";

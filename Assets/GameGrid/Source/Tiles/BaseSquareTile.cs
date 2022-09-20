@@ -10,7 +10,16 @@ namespace GameGrid.Source.Tiles
         
         [SerializeField] private TileType tileType = TileType.None;
 
-        public virtual Vector3Int Coordinate { protected set; get; }
+        private Vector3Int _coordinate;
+        public virtual Vector3Int Coordinate
+        {
+            set
+            {
+                transform.position = value;
+                _coordinate = value;
+            }
+            get => _coordinate;
+        }
 
         public void SetupTile(BaseSquareTileManager newBaseSquareTileManager, Vector3Int newCoordinate)
         {

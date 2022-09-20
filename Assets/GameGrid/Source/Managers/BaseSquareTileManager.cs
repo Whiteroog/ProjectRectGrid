@@ -23,6 +23,8 @@ namespace GameGrid.Source.Managers
                 
                 _cachedTiles[coordinatePlacedTile] = tile;
             }
+            
+            print(this.name + " awake");
         }
     }
 }
