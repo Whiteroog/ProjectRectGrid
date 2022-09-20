@@ -1,8 +1,9 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 
 namespace GameGrid.Source.Tiles
 {
-    public class SelectTile : Tile
+    public class SelectTile : BaseSquareTile
     {
         
     }

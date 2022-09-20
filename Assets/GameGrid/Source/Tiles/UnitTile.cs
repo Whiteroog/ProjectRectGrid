@@ -2,7 +2,7 @@
 
 namespace GameGrid.Source.Tiles
 {
-    public class UnitTile : Tile
+    public class UnitTile : BaseSquareTile
     {
         
     }

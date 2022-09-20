@@ -1,17 +1,21 @@
-﻿using UnityEngine;
+﻿using GameGrid.Source.Managers;
+using UnityEngine;
 using UnityEngine.UI;
 
 namespace GameGrid.Source.Tiles
 {
-    public class GroundTile : Tile
+    public class GroundTile : BaseSquareTile
     {
         [SerializeField] private Text coordText;
 
-        public override void SetCoordinate(Vector3Int newCoordinate)
+        public override Vector3Int Coordinate
         {
-            base.SetCoordinate(newCoordinate);
-            
-            coordText.text = $"{Coordinate.x}     {Coordinate.y}";
+            protected set
+            {
+                base.Coordinate = value;
+                coordText.text = $"{value.x}     {value.y}";
+            }
+            get => base.Coordinate;
         }
     }
 }

@@ -1,4 +1,4 @@
-using System;
+using GameGrid.Source.Tiles;
 using UnityEngine;
 using UnityEngine.Events;
 
@@ -6,18 +6,18 @@ namespace GameGrid.Source.Controllers
 {
     public class CameraController : MonoBehaviour
     {
-        [SerializeField] private new Camera camera;
+        [SerializeField] private Camera playerCamera;
         [SerializeField] private float movementSpeed = 5.0f;
         [SerializeField] private float scrollSpeed = 10.0f;
         
         [SerializeField] private float scrollSizeMin = 3.0f;
         [SerializeField] private float scrollSizeMax = 8.0f;
 
-        //public UnityEvent onSelectedTile; 
+        public UnityEvent<Vector3> onClickTile; 
 
         private void Start()
         {
-            camera.orthographicSize = Mathf.Clamp(camera.orthographicSize, scrollSizeMin, scrollSizeMax);
+            playerCamera.orthographicSize = Mathf.Clamp(playerCamera.orthographicSize, scrollSizeMin, scrollSizeMax);
         }
 
         private void Update()
@@ -31,8 +31,13 @@ namespace GameGrid.Source.Controllers
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Vector2 clickWorldPosition = camera.ScreenToWorldPoint(Input.mousePosition);
+                Vector3 clickWorldPosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(clickWorldPosition, Vector2.zero);
+
+                if (hit.collider.gameObject is BaseSquareTile)
+                {
+                    onClickTile.Invoke(clickWorldPosition);
+                }
             }
         }
 
@@ -41,11 +46,11 @@ namespace GameGrid.Source.Controllers
             float scroll = Input.GetAxis("Mouse ScrollWheel");
             float deltaScroll = scroll * scrollSpeed * Time.deltaTime;
 
-            float orthographicSize = camera.orthographicSize;
+            float orthographicSize = playerCamera.orthographicSize;
             orthographicSize += deltaScroll;
             
-            camera.orthographicSize = orthographicSize;
-            camera.orthographicSize = Mathf.Clamp(orthographicSize, scrollSizeMin, scrollSizeMax);
+            playerCamera.orthographicSize = orthographicSize;
+            playerCamera.orthographicSize = Mathf.Clamp(orthographicSize, scrollSizeMin, scrollSizeMax);
         }
 
         private void CameraMovement()
