@@ -59,6 +59,7 @@ namespace GameGrid.Source.Managers
                 }
                 case TileType.Unit:
                 {
+                    print("Select unit");
                     IsSelect = true;
                     _selectTile.Coordinate = selectedTile.Coordinate;
                     

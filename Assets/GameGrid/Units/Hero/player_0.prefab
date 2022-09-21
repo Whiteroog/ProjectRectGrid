@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 8977316415319653952}
   - component: {fileID: 4235550447592489394}
   - component: {fileID: 1188293983136067633}
+  - component: {fileID: 4562771494572912926}
   - component: {fileID: 2755522707816595045}
   m_Layer: 0
   m_Name: player_0
@@ -112,6 +113,26 @@ BoxCollider2D:
   serializedVersion: 2
   m_Size: {x: 1, y: 1}
   m_EdgeRadius: 0
+--- !u!95 &4562771494572912926
+Animator:
+  serializedVersion: 4
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1463005011209680588}
+  m_Enabled: 1
+  m_Avatar: {fileID: 0}
+  m_Controller: {fileID: 9100000, guid: 11ae8bb4d856db54b8c2811dd43553c2, type: 2}
+  m_CullingMode: 0
+  m_UpdateMode: 0
+  m_ApplyRootMotion: 0
+  m_LinearVelocityBlending: 0
+  m_StabilizeFeet: 0
+  m_WarningMessage: 
+  m_HasTransformHierarchy: 1
+  m_AllowConstantClipSamplingOptimization: 1
+  m_KeepAnimatorControllerStateOnDisable: 0
 --- !u!114 &2755522707816595045
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -126,3 +147,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   baseSquareTileManager: {fileID: 0}
   tileType: 2
+  movementSpeed: 2
+  unitAnimator: {fileID: 4562771494572912926}
+  spriteRenderer: {fileID: 4235550447592489394}
