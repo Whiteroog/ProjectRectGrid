@@ -8,7 +8,12 @@ namespace GameGrid.Source.Managers
         [SerializeField] private GameObject _tilePrefab;
         private SelectTile _selectTile;
 
+        private bool _isProcessing = false;
+
         private bool _isSelect = false;
+
+        private BaseSquareTile _cachedSelectedTile;
+        
         public bool IsSelect
         {
             private set
@@ -30,26 +35,56 @@ namespace GameGrid.Source.Managers
         // Event from CameraController
         public void SelectTile(BaseSquareTile selectedTile)
         {
-            if (IsSelect = selectedTile.GetTileType() == TileType.Select)
+            if (_isProcessing)
+                return;
+
+            switch (selectedTile.GetTileType())
             {
-                if (_selectTile.HasObject())
+                case TileType.Ground:
+                {
+                    IsSelect = true;
+                    _selectTile.Coordinate = selectedTile.Coordinate;
+                    
+                    if (_selectTile.HasObject())
+                    {
+                        IsSelect = false;
+                        if(_selectTile.selectedTile is UnitTile unitTile)
+                        {
+                            unitTile.OnAnimating += SetProcessing;
+                            unitTile.MoveUnit(selectedTile.Coordinate);
+                            _selectTile.ClearSelectedObject();
+                        }
+                    }
+                    break;
+                }
+                case TileType.Unit:
+                {
+                    IsSelect = true;
+                    _selectTile.Coordinate = selectedTile.Coordinate;
+                    
+                    _selectTile.selectedTile = selectedTile;
+                    break;
+                }
+                case TileType.Select:
+                case TileType.None:
+                default:
                 {
                     IsSelect = false;
-                    _selectTile.MoveUnit(selectedTile.Coordinate);
-                }
-                else
-                {
-                    _selectTile.Coordinate = selectedTile.Coordinate;
-                    if (selectedTile.GetTileType() == TileType.Unit)
-                    {
-                        _selectTile.selectedTile = selectedTile;
-                    }
+                    if (_selectTile.HasObject())
+                        _selectTile.ClearSelectedObject();
+                    
+                    break;
                 }
             }
-            else
+        }
+
+        public void SetProcessing(object sender, bool state)
+        {
+            _isProcessing = state;
+
+            if (!state)
             {
-                if (_selectTile.HasObject())
-                    _selectTile.ClearSelectedObject();
+                ((UnitTile)sender).OnAnimating -= SetProcessing;
             }
         }
     }

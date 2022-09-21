@@ -13,14 +13,5 @@ namespace GameGrid.Source.Tiles
         {
             selectedTile = null;
         }
-
-        public void MoveUnit(Vector3Int newCoordinate)
-        {
-            if(HasObject())
-            {
-                selectedTile.Coordinate = newCoordinate;
-                ClearSelectedObject();
-            }
-        }
     }
 }

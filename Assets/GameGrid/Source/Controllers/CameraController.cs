@@ -26,7 +26,8 @@ namespace GameGrid.Source.Controllers
             CameraScrolling();
             OnClicked();
         }
-
+        
+        // ReSharper disable Unity.PerformanceAnalysis
         private void OnClicked()
         {
             if (Input.GetMouseButtonDown(0))
@@ -34,7 +35,7 @@ namespace GameGrid.Source.Controllers
                 Vector3 clickWorldPosition = playerCamera.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(clickWorldPosition, Vector2.zero);
 
-                BaseSquareTile selectedTile = hit.collider.gameObject.GetComponent<BaseSquareTile>();
+                BaseSquareTile selectedTile = hit.collider?.gameObject.GetComponent<BaseSquareTile>();
                 if (selectedTile is not null)
                 {
                     onClickTile.Invoke(selectedTile);
