@@ -30,9 +30,7 @@ namespace GameGrid.Source.Managers
         // Event from CameraController
         public void SelectTile(BaseSquareTile selectedTile)
         {
-            IsSelect = !(selectedTile is SelectTile);
-
-            if(IsSelect)
+            if(IsSelect = !(selectedTile is SelectTile))
             {
                 if (_selectTile.HasObject())
                 {
