@@ -5,20 +5,20 @@ namespace GameGrid.Source.Tiles
 {
     public class SelectTile : BaseSquareTile
     {
-        public UnitTile selectedUnitTile;
+        public BaseSquareTile selectedTile;
 
-        public bool HasObject() => selectedUnitTile is not null;
+        public bool HasObject() => selectedTile is not null;
 
         public void ClearSelectedObject()
         {
-            selectedUnitTile = null;
+            selectedTile = null;
         }
 
         public void MoveUnit(Vector3Int newCoordinate)
         {
             if(HasObject())
             {
-                selectedUnitTile.Coordinate = newCoordinate;
+                selectedTile.Coordinate = newCoordinate;
                 ClearSelectedObject();
             }
         }

@@ -18,7 +18,7 @@ namespace GameGrid.Source.Managers
             }
             get => _isSelect;
         }
-        
+
         private void Awake()
         {
             Vector3Int spawnPosition = tilemap.LocalToCell(transform.position);
@@ -30,7 +30,7 @@ namespace GameGrid.Source.Managers
         // Event from CameraController
         public void SelectTile(BaseSquareTile selectedTile)
         {
-            if(IsSelect = !(selectedTile is SelectTile))
+            if (IsSelect = selectedTile.GetTileType() == TileType.Select)
             {
                 if (_selectTile.HasObject())
                 {
@@ -40,9 +40,9 @@ namespace GameGrid.Source.Managers
                 else
                 {
                     _selectTile.Coordinate = selectedTile.Coordinate;
-                    if (selectedTile is UnitTile unitTile)
+                    if (selectedTile.GetTileType() == TileType.Unit)
                     {
-                        _selectTile.selectedUnitTile = unitTile;
+                        _selectTile.selectedTile = selectedTile;
                     }
                 }
             }
