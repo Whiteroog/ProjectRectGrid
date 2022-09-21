@@ -8,8 +8,16 @@ namespace GameGrid.Source.Managers
         [SerializeField] private GameObject _tilePrefab;
         private SelectTile _selectTile;
 
-        public bool IsSelecting { private set; get; } = false;
-        public bool IsSelectingUnit { private set; get; } = false;
+        private bool _isSelect = false;
+        public bool IsSelect
+        {
+            private set
+            {
+                _isSelect = value;
+                _selectTile.gameObject.SetActive(value);
+            }
+            get => _isSelect;
+        }
         
         private void Awake()
         {
@@ -22,17 +30,28 @@ namespace GameGrid.Source.Managers
         // Event from CameraController
         public void SelectTile(BaseSquareTile selectedTile)
         {
-            if (IsSelecting && _selectTile.Coordinate == selectedTile.Coordinate || selectedTile is UnitTile)
+            IsSelect = !(selectedTile is SelectTile);
+
+            if(IsSelect)
             {
-                IsSelecting = IsSelectingUnit = false;
-                _selectTile.gameObject.SetActive(false);
+                if (_selectTile.HasObject())
+                {
+                    IsSelect = false;
+                    _selectTile.MoveUnit(selectedTile.Coordinate);
+                }
+                else
+                {
+                    _selectTile.Coordinate = selectedTile.Coordinate;
+                    if (selectedTile is UnitTile unitTile)
+                    {
+                        _selectTile.selectedUnitTile = unitTile;
+                    }
+                }
             }
             else
             {
-                IsSelecting = true;
-                IsSelectingUnit = selectedTile is UnitTile;
-                _selectTile.gameObject.SetActive(true);
-                _selectTile.Coordinate = selectedTile.Coordinate;
+                if (_selectTile.HasObject())
+                    _selectTile.ClearSelectedObject();
             }
         }
     }

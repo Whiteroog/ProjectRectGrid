@@ -6286,9 +6286,9 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   playerCamera: {fileID: 519420031}
   movementSpeed: 5
-  scrollSpeed: 10
-  scrollSizeMin: 3
-  scrollSizeMax: 5
+  scrollSpeed: 50
+  scrollSizeMin: 2
+  scrollSizeMax: 4
   onClickTile:
     m_PersistentCalls:
       m_Calls:
@@ -18959,11 +18959,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 8977316415319653952, guid: 1d266cab5ca25034aa37eac05b739956, type: 3}
       propertyPath: m_LocalPosition.x
-      value: -1.61
+      value: 0.12
       objectReference: {fileID: 0}
     - target: {fileID: 8977316415319653952, guid: 1d266cab5ca25034aa37eac05b739956, type: 3}
       propertyPath: m_LocalPosition.y
-      value: -1.08
+      value: 0.02
       objectReference: {fileID: 0}
     - target: {fileID: 8977316415319653952, guid: 1d266cab5ca25034aa37eac05b739956, type: 3}
       propertyPath: m_LocalPosition.z
