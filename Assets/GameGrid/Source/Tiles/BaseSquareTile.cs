@@ -16,6 +16,7 @@ namespace GameGrid.Source.Tiles
             set
             {
                 transform.position = value;
+                baseSquareTileManager.UpdateCoordinateInCache(this, value);
                 _coordinate = value;
             }
             get => _coordinate;
@@ -28,6 +29,8 @@ namespace GameGrid.Source.Tiles
         }
         
         public TileType GetTileType() => tileType;
+
+        public BaseSquareTileManager GetTileManager() => baseSquareTileManager;
     }
 
     public enum TileType

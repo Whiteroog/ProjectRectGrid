@@ -8,19 +8,11 @@ namespace GameGrid.Source.Tiles
 {
     public class UnitTile : BaseSquareTile
     {
-        public event Action<UnitTile, bool> OnAnimating;
-
         [SerializeField] private float movementSpeed = 2.0f;
         [SerializeField] private Animator unitAnimator;
         [SerializeField] private SpriteRenderer spriteRenderer;
 
-        public void MoveUnit(Vector3Int newCoordinate)
-        {
-            OnAnimating?.Invoke(this, true);
-            StartCoroutine(MovementUnit(newCoordinate));
-        }
-
-        public IEnumerator MovementUnit(Vector3Int targetCoordinate)
+        public IEnumerator MovementUnit(Vector3Int targetCoordinate, Action onEndingMovement)
         {
             Vector3 startPosition = Coordinate;
             Vector3 endPosition = targetCoordinate;
@@ -44,7 +36,7 @@ namespace GameGrid.Source.Tiles
             Coordinate = targetCoordinate;
             unitAnimator.SetBool("IsMove", false);
             
-            OnAnimating?.Invoke(this, false);
+            onEndingMovement?.Invoke();
         }
     }
 }

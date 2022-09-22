@@ -9,11 +9,8 @@ namespace GameGrid.Source.Managers
         private SelectTile _selectTile;
 
         private bool _isProcessing = false;
-
         private bool _isSelect = false;
 
-        private BaseSquareTile _cachedSelectedTile;
-        
         public bool IsSelect
         {
             private set
@@ -24,11 +21,13 @@ namespace GameGrid.Source.Managers
             get => _isSelect;
         }
 
-        private void Awake()
+        protected override void Awake()
         {
             Vector3Int spawnPosition = tilemap.LocalToCell(transform.position);
             _selectTile = Instantiate(_tilePrefab, spawnPosition, Quaternion.identity, transform).GetComponent<SelectTile>();
-            _selectTile.Coordinate = spawnPosition;
+            
+            base.Awake();
+
             _selectTile.gameObject.SetActive(false);
         }
 
@@ -48,10 +47,10 @@ namespace GameGrid.Source.Managers
                     if (_selectTile.HasObject())
                     {
                         IsSelect = false;
-                        if(_selectTile.selectedTile is UnitTile unitTile)
+                        if(_selectTile.savingTile.GetTileManager() is UnitsManager unitManager)
                         {
-                            unitTile.OnAnimating += SetProcessing;
-                            unitTile.MoveUnit(selectedTile.Coordinate);
+                            unitManager.OnProcessing += SetProcessing;
+                            unitManager.MoveUnit(_selectTile.savingTile as UnitTile, selectedTile.Coordinate);
                             _selectTile.ClearSelectedObject();
                         }
                     }
@@ -63,7 +62,7 @@ namespace GameGrid.Source.Managers
                     IsSelect = true;
                     _selectTile.Coordinate = selectedTile.Coordinate;
                     
-                    _selectTile.selectedTile = selectedTile;
+                    _selectTile.savingTile = selectedTile;
                     break;
                 }
                 case TileType.Select:
@@ -85,7 +84,7 @@ namespace GameGrid.Source.Managers
 
             if (!state)
             {
-                ((UnitTile)sender).OnAnimating -= SetProcessing;
+                ((UnitsManager)sender).OnProcessing -= SetProcessing;
             }
         }
     }

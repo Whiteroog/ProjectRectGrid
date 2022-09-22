@@ -10,9 +10,9 @@ namespace GameGrid.Source.Managers
     {
         [SerializeField] protected Tilemap tilemap;
         
-        private Dictionary<Vector3Int, BaseSquareTile> _cachedTiles = new();
-        
-        private void Awake()
+        protected Dictionary<Vector3Int, BaseSquareTile> _cachedHavingTiles = new();
+
+        protected virtual void Awake()
         {
             BaseSquareTile[] tiles = GetComponentsInChildren<BaseSquareTile>(); // can find derived class
 
@@ -21,10 +21,22 @@ namespace GameGrid.Source.Managers
                 Vector3Int coordinatePlacedTile = tilemap.LocalToCell(tile.transform.localPosition);
                 tile.SetupTile(this, coordinatePlacedTile);
                 
-                _cachedTiles[coordinatePlacedTile] = tile;
+                _cachedHavingTiles[coordinatePlacedTile] = tile;
             }
-            
-            print(this.name + " awake");
+        }
+
+        public void UpdateCoordinateInCache(BaseSquareTile updatingTile, Vector3Int newCoordinate)
+        {
+            if (_cachedHavingTiles.Remove(updatingTile.Coordinate))
+            {
+                _cachedHavingTiles[newCoordinate] = updatingTile;
+            }
+        }
+        
+        public BaseSquareTile GetTileAt(Vector3Int Coordinate)
+        {
+            _cachedHavingTiles.TryGetValue(Coordinate, out BaseSquareTile returnedTile);
+            return returnedTile;
         }
     }
 }
