@@ -16,8 +16,8 @@ namespace GameGrid.Source.Tiles
             set
             {
                 transform.position = value;
-                baseSquareTileManager.UpdateCoordinateInCache(this, value);
                 _coordinate = value;
+                baseSquareTileManager.UpdateCoordinateInCache(this, value);
             }
             get => _coordinate;
         }

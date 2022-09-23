@@ -21,17 +21,16 @@ namespace GameGrid.Source.Managers
             {
                 Vector3Int coordinatePlacedTile = tilemap.LocalToCell(tile.transform.localPosition);
                 tile.SetupTile(this, coordinatePlacedTile);
-                
+
                 cachedHavingTiles[coordinatePlacedTile] = tile;
             }
         }
 
         public void UpdateCoordinateInCache(BaseSquareTile updatingTile, Vector3Int newCoordinate)
         {
-            if (cachedHavingTiles.Remove(updatingTile.Coordinate))
-            {
-                cachedHavingTiles[newCoordinate] = updatingTile;
-            }
+            if(cachedHavingTiles.ContainsKey(updatingTile.Coordinate))
+                if (cachedHavingTiles.Remove(updatingTile.Coordinate))
+                    cachedHavingTiles[newCoordinate] = updatingTile;
         }
 
         public BaseSquareTile GetTile(Vector3Int Cooridnate)
