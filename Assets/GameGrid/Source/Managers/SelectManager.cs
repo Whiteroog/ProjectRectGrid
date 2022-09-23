@@ -10,7 +10,7 @@ namespace GameGrid.Source.Managers
         [SerializeField] private GameObject pointPrefab;
 
         private SelectTile _selectTile;
-        private List<SelectTile> _pointPossibleTiles;
+        private List<SelectTile> _pointPossibleTiles = new List<SelectTile>();
 
         private bool _isProcessing = false;
         private bool _isSelect = false;
@@ -37,7 +37,9 @@ namespace GameGrid.Source.Managers
 
         public void CreatePointPossibleTiles(Vector3Int spawnCoordinate)
         {
-            _pointPossibleTiles.Add(Instantiate(pointPrefab, spawnCoordinate, Quaternion.identity, transform).GetComponent<SelectTile>());
+            SelectTile pointTile = Instantiate(pointPrefab, spawnCoordinate, Quaternion.identity, transform).GetComponent<SelectTile>();
+            CachingTile(pointTile);
+            _pointPossibleTiles.Add(pointTile);
         }
 
         public void ResetPointPossibleTiles()

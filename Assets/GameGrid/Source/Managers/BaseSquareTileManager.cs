@@ -19,11 +19,16 @@ namespace GameGrid.Source.Managers
 
             foreach (BaseSquareTile tile in tiles)
             {
-                Vector3Int coordinatePlacedTile = tilemap.LocalToCell(tile.transform.localPosition);
-                tile.SetupTile(this, coordinatePlacedTile);
-
-                cachedHavingTiles[coordinatePlacedTile] = tile;
+                CachingTile(tile);
             }
+        }
+
+        public void CachingTile(BaseSquareTile tile)
+        {
+            Vector3Int coordinatePlacedTile = tilemap.LocalToCell(tile.transform.localPosition);
+            tile.SetupTile(this, coordinatePlacedTile);
+
+            cachedHavingTiles[coordinatePlacedTile] = tile;
         }
 
         public void UpdateCoordinateInCache(BaseSquareTile updatingTile, Vector3Int newCoordinate)

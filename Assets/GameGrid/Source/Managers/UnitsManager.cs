@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameGrid.Source.Tiles;
 using UnityEngine;
 
@@ -29,7 +30,7 @@ namespace GameGrid.Source.Managers
             GroundTile groundTileUnderUnit = groundTilesManager.GetTile(unit.Coordinate) as GroundTile;
             _cachedPastWays = BreadthFirstSearch(groundTilesManager, groundTileUnderUnit, unit.GetMovementPoints());
 
-            foreach(GroundTile possibleTile in _cachedPastWays.Keys)
+            foreach(GroundTile possibleTile in _cachedPastWays.Keys.Skip(1).ToList())
             {
                 selectManager.CreatePointPossibleTiles(possibleTile.Coordinate);
             }
