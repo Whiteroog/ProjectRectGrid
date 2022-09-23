@@ -20621,7 +20621,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 1969044243}
-  _tilePrefab: {fileID: 3744404851449951713, guid: 6f5498c259d0e214e99513275c4ca439, type: 3}
+  selectPrefab: {fileID: 3744404851449951713, guid: 6f5498c259d0e214e99513275c4ca439, type: 3}
+  pointPrefab: {fileID: 6212787147103388586, guid: 8559a881b03800149a670c83421bfe63, type: 3}
 --- !u!1001 &1973348398
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20881,6 +20882,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tilemap: {fileID: 1979992296}
+  groundTilesManager: {fileID: 300349576}
 --- !u!1001 &1980216896
 PrefabInstance:
   m_ObjectHideFlags: 0

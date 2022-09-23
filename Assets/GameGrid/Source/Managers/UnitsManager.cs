@@ -8,6 +8,11 @@ namespace GameGrid.Source.Managers
     public class UnitsManager : BaseSquareTileManager
     {
         public event Action<UnitsManager, bool> OnProcessing;
+
+        private Dictionary<GroundTile, GroundTile> _cachedPastWays;
+
+        [SerializeField] private GroundTilesManager groundTilesManager;
+
         public void MoveUnit(UnitTile unit ,Vector3Int newCoordinate)
         {
             OnProcessing?.Invoke(this, true);
@@ -17,6 +22,17 @@ namespace GameGrid.Source.Managers
         private void EndProcessing()
         {
             OnProcessing?.Invoke(this, false);
+        }
+
+        public void GeneratePossibleWays(SelectManager selectManager, UnitTile unit)
+        {
+            GroundTile groundTileUnderUnit = groundTilesManager.GetTile(unit.Coordinate) as GroundTile;
+            _cachedPastWays = BreadthFirstSearch(groundTilesManager, groundTileUnderUnit, unit.GetMovementPoints());
+
+            foreach(GroundTile possibleTile in _cachedPastWays.Keys)
+            {
+                selectManager.CreatePointPossibleTiles(possibleTile.Coordinate);
+            }
         }
 
         private Dictionary<GroundTile, GroundTile> BreadthFirstSearch(GroundTilesManager groundTilesManager, GroundTile startNode, int movementPoints)
@@ -32,7 +48,7 @@ namespace GameGrid.Source.Managers
             while (nodesToVisitQueue.Count > 0)
             {
                 GroundTile currentNode = nodesToVisitQueue.Dequeue();
-                foreach (GroundTile neighbourNode in groundTilesManager.GetNeighboursFor(currentNode))
+                foreach (GroundTile neighbourNode in groundTilesManager.GetNeighboursFor(currentNode.Coordinate))
                 {
                     if(neighbourNode.IsObstacle())
                         continue;

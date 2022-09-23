@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using GameGrid.Source.Tiles;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -31,6 +32,12 @@ namespace GameGrid.Source.Managers
             {
                 cachedHavingTiles[newCoordinate] = updatingTile;
             }
+        }
+
+        public BaseSquareTile GetTile(Vector3Int Cooridnate)
+        {
+            cachedHavingTiles.TryGetValue(Cooridnate, out BaseSquareTile returnedTile);
+            return returnedTile;
         }
     }
 }

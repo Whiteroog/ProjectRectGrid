@@ -1,12 +1,16 @@
 ﻿using GameGrid.Source.Tiles;
+using System.Collections.Generic;
 using UnityEngine;
 
 namespace GameGrid.Source.Managers
 {
     public class SelectManager : BaseSquareTileManager
     {
-        [SerializeField] private GameObject _tilePrefab;
+        [SerializeField] private GameObject selectPrefab;
+        [SerializeField] private GameObject pointPrefab;
+
         private SelectTile _selectTile;
+        private List<SelectTile> _pointPossibleTiles;
 
         private bool _isProcessing = false;
         private bool _isSelect = false;
@@ -24,11 +28,25 @@ namespace GameGrid.Source.Managers
         protected override void Awake()
         {
             Vector3Int spawnPosition = tilemap.LocalToCell(transform.position);
-            _selectTile = Instantiate(_tilePrefab, spawnPosition, Quaternion.identity, transform).GetComponent<SelectTile>();
+            _selectTile = Instantiate(selectPrefab, spawnPosition, Quaternion.identity, transform).GetComponent<SelectTile>();
             
             base.Awake();
 
             _selectTile.gameObject.SetActive(false);
+        }
+
+        public void CreatePointPossibleTiles(Vector3Int spawnCoordinate)
+        {
+            _pointPossibleTiles.Add(Instantiate(pointPrefab, spawnCoordinate, Quaternion.identity, transform).GetComponent<SelectTile>());
+        }
+
+        public void ResetPointPossibleTiles()
+        {
+            for(int i = _pointPossibleTiles.Count - 1; 0 <= i; i--)
+            {
+                Destroy(_pointPossibleTiles[i].gameObject);
+                _pointPossibleTiles.RemoveAt(i);
+            }
         }
 
         // Event from CameraController
@@ -52,7 +70,10 @@ namespace GameGrid.Source.Managers
                             unitManager.OnProcessing += SetProcessing;
                             unitManager.MoveUnit(_selectTile.savingTile as UnitTile, selectedTile.Coordinate);
                             _selectTile.ClearSelectedObject();
-                        }
+
+                                if (_pointPossibleTiles.Count > 0)
+                                    ResetPointPossibleTiles();
+                            }
                     }
                     break;
                 }
@@ -60,9 +81,18 @@ namespace GameGrid.Source.Managers
                 {
                     print("Select unit");
                     IsSelect = true;
-                    _selectTile.Coordinate = selectedTile.Coordinate;
-                    
-                    _selectTile.savingTile = selectedTile;
+
+                    if(selectedTile is UnitTile unitTile)
+                    {
+                            _selectTile.Coordinate = unitTile.Coordinate;
+                            _selectTile.savingTile = unitTile;
+
+                            if (unitTile.GetTileManager() is UnitsManager unitManager )
+                            {
+                                unitManager.GeneratePossibleWays(this, unitTile);
+                            }
+                    }
+
                     break;
                 }
                 case TileType.Select:
@@ -72,8 +102,12 @@ namespace GameGrid.Source.Managers
                     IsSelect = false;
                     if (_selectTile.HasObject())
                         _selectTile.ClearSelectedObject();
+
+                        if (_pointPossibleTiles.Count > 0)
+                            ResetPointPossibleTiles();
                     
-                    break;
+
+                        break;
                 }
             }
         }

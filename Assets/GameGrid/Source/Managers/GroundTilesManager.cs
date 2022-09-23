@@ -7,13 +7,13 @@ namespace GameGrid.Source.Managers
 {
     public class GroundTilesManager : BaseSquareTileManager
     {
-        public List<GroundTile> GetNeighboursFor(GroundTile centerTile)
+        public List<GroundTile> GetNeighboursFor(Vector3Int coordinate)
         {
             List<GroundTile> neighboursTileCoordinates = new List<GroundTile>();
 
             foreach (Vector3Int direction in directionsSquareTile)
             {
-                if(cachedHavingTiles.TryGetValue(centerTile.Coordinate + direction, out BaseSquareTile tile))
+                if(cachedHavingTiles.TryGetValue(coordinate + direction, out BaseSquareTile tile))
                     neighboursTileCoordinates.Add(tile as GroundTile);
             }
 

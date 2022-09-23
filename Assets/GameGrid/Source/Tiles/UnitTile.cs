@@ -8,6 +8,7 @@ namespace GameGrid.Source.Tiles
 {
     public class UnitTile : BaseSquareTile
     {
+        [SerializeField] private int movementPoints = 5;
         [SerializeField] private float movementSpeed = 2.0f;
         [SerializeField] private Animator unitAnimator;
         [SerializeField] private SpriteRenderer spriteRenderer;
@@ -38,5 +39,7 @@ namespace GameGrid.Source.Tiles
             
             onEndingMovement?.Invoke();
         }
+
+        public int GetMovementPoints() => movementPoints;
     }
 }
