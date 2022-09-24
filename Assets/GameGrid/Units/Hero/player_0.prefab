@@ -145,8 +145,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936bb45c01bb4a1693f81e2367a9ceb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  baseSquareTileManager: {fileID: 0}
   tileType: 2
+  movementPoints: 5
   movementSpeed: 2
-  unitAnimator: {fileID: 4562771494572912926}
-  spriteRenderer: {fileID: 4235550447592489394}

@@ -4202,7 +4202,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 144d8cf7beb34aa18d15c84d7948b233, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemap: {fileID: 300349575}
 --- !u!1001 &300857247
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -6284,7 +6283,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a740fb99046bd4f40ba905437ec89e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  playerCamera: {fileID: 519420031}
   movementSpeed: 5
   scrollSpeed: 50
   scrollSizeMin: 2
@@ -6686,6 +6684,7 @@ GameObject:
   m_Component:
   - component: {fileID: 544101445}
   - component: {fileID: 544101444}
+  - component: {fileID: 544101446}
   m_Layer: 0
   m_Name: Grid
   m_TagString: Untagged
@@ -6723,6 +6722,18 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &544101446
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 544101443}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 0b8d2c2c031344839142feaa42a96fed, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!1001 &546434788
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -20620,7 +20631,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d61bb7100434dde8be499d6e4b6ff50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemap: {fileID: 1969044243}
   selectPrefab: {fileID: 3744404851449951713, guid: 6f5498c259d0e214e99513275c4ca439, type: 3}
   pointPrefab: {fileID: 6212787147103388586, guid: 8559a881b03800149a670c83421bfe63, type: 3}
 --- !u!1001 &1973348398
@@ -20881,8 +20891,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 52296e9b50af4b878c2909f319d63065, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemap: {fileID: 1979992296}
-  groundTilesManager: {fileID: 300349576}
 --- !u!1001 &1980216896
 PrefabInstance:
   m_ObjectHideFlags: 0

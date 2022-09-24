@@ -14,8 +14,8 @@ namespace GameGrid.Source.Managers
         private List<SelectTile> _pointPossibleTiles = new ();
 
         private bool _isProcessing = false;
+        
         private bool _isSelect = false;
-
         public bool IsSelect
         {
             private set
@@ -45,7 +45,7 @@ namespace GameGrid.Source.Managers
 
         public void ResetPointPossibleTiles()
         {
-            for(int i = _pointPossibleTiles.Count - 1; 0 <= i; i--)
+            for(int i = _pointPossibleTiles.Count - 1; i >= 0; i--)
             {
                 Destroy(_pointPossibleTiles[i].gameObject);
                 _pointPossibleTiles.RemoveAt(i);
@@ -63,26 +63,19 @@ namespace GameGrid.Source.Managers
                 case TileType.Ground:
                 {
                     IsSelect = true;
-                    _selectTile.Coordinate = selectedTile.Coordinate;
+                    SetTileCoordinate(_selectTile, selectedTile.Coordinate);
 
                     if (_selectTile.IsSelecting())
                     {
-                        IsSelect = false;
-                        _selectTile.Coordinate = selectedTile.Coordinate;
-
-                        UnitTile unitTile = _selectTile.SelectingUnit;
-                        if (unitTile.GetTileManager() is UnitsManager unitsManager)
-                        {
-                            unitsManager.OnProcessing += SetProcessing;
-                            unitsManager.MoveUnit(unitTile, selectedTile.Coordinate);
-                        }
+                        _selectTile.ClearSelecting();
+                        ResetPointPossibleTiles();
                     }
                     break;
                 }
                 case TileType.UnitPlayer:
                 {
                     IsSelect = true;
-                    _selectTile.Coordinate = selectedTile.Coordinate;
+                    SetTileCoordinate(_selectTile, selectedTile.Coordinate);
 
                     if(!_selectTile.IsSelecting())
                     {
@@ -90,13 +83,28 @@ namespace GameGrid.Source.Managers
                         {
                             _selectTile.SelectingUnit = unitTile;
 
-                            // if (unitTile.GetTileManager() is UnitsManager unitManager)
-                            // {
-                            //     unitManager.GeneratePossibleWays(this, unitTile);
-                            // }
+                            if (unitTile.GetTileManager() is UnitsManager unitManager)
+                            {
+                                unitManager.GeneratePossibleWays(this, unitTile);
+                            }
                         }
                     }
 
+                    break;
+                }
+                case TileType.PointWay:
+                {
+                    IsSelect = false;
+                    SetTileCoordinate(_selectTile, selectedTile.Coordinate);
+
+                    UnitTile unitTile = _selectTile.SelectingUnit;
+                    if (unitTile.GetTileManager() is UnitsManager unitsManager)
+                    {
+                        unitsManager.OnProcessing += SetProcessing;
+                        unitsManager.MoveUnit(unitTile, selectedTile.Coordinate);
+                    }
+                    
+                    ResetPointPossibleTiles();
                     break;
                 }
                 case TileType.Select:
@@ -106,7 +114,10 @@ namespace GameGrid.Source.Managers
                     IsSelect = false;
                     
                     if (_selectTile.IsSelecting())
+                    {
                         _selectTile.ClearSelecting();
+                        ResetPointPossibleTiles();
+                    }
                     
                     break;
                 }

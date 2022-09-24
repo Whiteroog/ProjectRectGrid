@@ -13,6 +13,9 @@ namespace GameGrid.Source.Managers
 
             foreach (Vector3Int direction in _directionsSquareTile)
             {
+                if(GetTile(coordinate + direction) is null)
+                    continue;
+                
                 neighboursTileCoordinates.Add(GetTile(coordinate + direction) as GroundTile);
             }
 

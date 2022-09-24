@@ -14,12 +14,7 @@ namespace GameGrid.Source.Tiles
 
         public virtual Vector3Int Coordinate
         {
-            set
-            {
-                var _ = _coordinate;
-                transform.position = _coordinate = value;
-                _baseSquareTileManager.UpdateCoordinateInCache(this, _);
-            }
+            set => transform.position = _coordinate = value;
             get => _coordinate;
         }
 

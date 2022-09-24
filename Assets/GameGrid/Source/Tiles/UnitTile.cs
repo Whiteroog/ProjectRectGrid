@@ -58,7 +58,7 @@ namespace GameGrid.Source.Tiles
 
                 DirectionRenderSprite(start, end);
                 
-                for (float t = 0; t < 1; t += Time.deltaTime / movementSpeed)
+                for (float t = 0; t < 1; t += Time.deltaTime * movementSpeed)
                 {
                     transform.position = Vector3.Lerp(start, end, t);
                     yield return null;
