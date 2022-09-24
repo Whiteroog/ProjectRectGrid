@@ -9,12 +9,14 @@ namespace GameGrid.Source.Managers
 {
     public class BaseSquareTileManager : MonoBehaviour
     {
-        [SerializeField] protected Tilemap tilemap;
+        protected Tilemap Tilemap;
         
-        protected Dictionary<Vector3Int, BaseSquareTile> cachedHavingTiles = new();
+        protected Dictionary<Vector3Int, BaseSquareTile> CachedTiles = new();
 
         protected virtual void Awake()
         {
+            Tilemap = GetComponent<Tilemap>();
+            
             BaseSquareTile[] tiles = GetComponentsInChildren<BaseSquareTile>(); // can find derived class
 
             foreach (BaseSquareTile tile in tiles)
@@ -25,22 +27,19 @@ namespace GameGrid.Source.Managers
 
         public void CachingTile(BaseSquareTile tile)
         {
-            Vector3Int coordinatePlacedTile = tilemap.LocalToCell(tile.transform.localPosition);
+            Vector3Int coordinatePlacedTile = Tilemap.LocalToCell(tile.transform.localPosition);
             tile.SetupTile(this, coordinatePlacedTile);
-
-            cachedHavingTiles[coordinatePlacedTile] = tile;
         }
 
-        public void UpdateCoordinateInCache(BaseSquareTile updatingTile, Vector3Int newCoordinate)
+        public void UpdateCoordinateInCache(BaseSquareTile updatingTile, Vector3Int oldCoordinate)
         {
-            if(cachedHavingTiles.ContainsKey(updatingTile.Coordinate))
-                if (cachedHavingTiles.Remove(updatingTile.Coordinate))
-                    cachedHavingTiles[newCoordinate] = updatingTile;
+            CachedTiles.Remove(oldCoordinate);
+            CachedTiles[updatingTile.Coordinate] = updatingTile;
         }
 
-        public BaseSquareTile GetTile(Vector3Int Cooridnate)
+        public BaseSquareTile GetTile(Vector3Int coordinate)
         {
-            cachedHavingTiles.TryGetValue(Cooridnate, out BaseSquareTile returnedTile);
+            CachedTiles.TryGetValue(coordinate, out BaseSquareTile returnedTile);
             return returnedTile;
         }
     }

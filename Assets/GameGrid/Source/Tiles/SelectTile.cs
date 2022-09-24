@@ -5,13 +5,18 @@ namespace GameGrid.Source.Tiles
 {
     public class SelectTile : BaseSquareTile
     {
-        public BaseSquareTile savingTile;
-
-        public bool HasObject() => savingTile is not null;
-
-        public void ClearSelectedObject()
+        private UnitTile _selectingUnit;
+        public UnitTile SelectingUnit
         {
-            savingTile = null;
+            set => _selectingUnit = value;
+            get
+            {
+                var _ = _selectingUnit;
+                _selectingUnit = null;
+                return _;
+            }
         }
+        public bool IsSelecting() => _selectingUnit is not null;
+        public void ClearSelecting() => _selectingUnit = null;
     }
 }

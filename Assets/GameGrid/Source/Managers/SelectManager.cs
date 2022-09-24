@@ -1,6 +1,7 @@
 ﻿using GameGrid.Source.Tiles;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace GameGrid.Source.Managers
 {
@@ -10,7 +11,7 @@ namespace GameGrid.Source.Managers
         [SerializeField] private GameObject pointPrefab;
 
         private SelectTile _selectTile;
-        private List<SelectTile> _pointPossibleTiles = new List<SelectTile>();
+        private List<SelectTile> _pointPossibleTiles = new ();
 
         private bool _isProcessing = false;
         private bool _isSelect = false;
@@ -27,10 +28,10 @@ namespace GameGrid.Source.Managers
 
         protected override void Awake()
         {
-            Vector3Int spawnPosition = tilemap.LocalToCell(transform.position);
-            _selectTile = Instantiate(selectPrefab, spawnPosition, Quaternion.identity, transform).GetComponent<SelectTile>();
-            
             base.Awake();
+            
+            _selectTile = Instantiate(selectPrefab, transform.position, Quaternion.identity, transform).GetComponent<SelectTile>();
+            CachingTile(_selectTile);
 
             _selectTile.gameObject.SetActive(false);
         }
@@ -63,36 +64,37 @@ namespace GameGrid.Source.Managers
                 {
                     IsSelect = true;
                     _selectTile.Coordinate = selectedTile.Coordinate;
-                    
-                    if (_selectTile.HasObject())
+
+                    if (_selectTile.IsSelecting())
                     {
                         IsSelect = false;
-                        if(_selectTile.savingTile.GetTileManager() is UnitsManager unitManager)
-                        {
-                            unitManager.OnProcessing += SetProcessing;
-                            unitManager.MoveUnit(_selectTile.savingTile as UnitTile, selectedTile.Coordinate);
-                            _selectTile.ClearSelectedObject();
+                        _selectTile.Coordinate = selectedTile.Coordinate;
 
-                                if (_pointPossibleTiles.Count > 0)
-                                    ResetPointPossibleTiles();
-                            }
+                        UnitTile unitTile = _selectTile.SelectingUnit;
+                        if (unitTile.GetTileManager() is UnitsManager unitsManager)
+                        {
+                            unitsManager.OnProcessing += SetProcessing;
+                            unitsManager.MoveUnit(unitTile, selectedTile.Coordinate);
+                        }
                     }
                     break;
                 }
-                case TileType.Unit:
+                case TileType.UnitPlayer:
                 {
-                    print("Select unit");
                     IsSelect = true;
+                    _selectTile.Coordinate = selectedTile.Coordinate;
 
-                    if(selectedTile is UnitTile unitTile)
+                    if(!_selectTile.IsSelecting())
                     {
-                            _selectTile.Coordinate = unitTile.Coordinate;
-                            _selectTile.savingTile = unitTile;
+                        if (selectedTile is UnitTile unitTile)
+                        {
+                            _selectTile.SelectingUnit = unitTile;
 
-                            if (unitTile.GetTileManager() is UnitsManager unitManager )
-                            {
-                                unitManager.GeneratePossibleWays(this, unitTile);
-                            }
+                            // if (unitTile.GetTileManager() is UnitsManager unitManager)
+                            // {
+                            //     unitManager.GeneratePossibleWays(this, unitTile);
+                            // }
+                        }
                     }
 
                     break;
@@ -102,14 +104,11 @@ namespace GameGrid.Source.Managers
                 default:
                 {
                     IsSelect = false;
-                    if (_selectTile.HasObject())
-                        _selectTile.ClearSelectedObject();
-
-                        if (_pointPossibleTiles.Count > 0)
-                            ResetPointPossibleTiles();
                     
-
-                        break;
+                    if (_selectTile.IsSelecting())
+                        _selectTile.ClearSelecting();
+                    
+                    break;
                 }
             }
         }

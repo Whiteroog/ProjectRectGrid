@@ -17,7 +17,7 @@ namespace GameGrid.Source.Managers
         public void MoveUnit(UnitTile unit ,Vector3Int newCoordinate)
         {
             OnProcessing?.Invoke(this, true);
-            StartCoroutine(unit.MovementUnit(newCoordinate, EndProcessing));
+            StartCoroutine(unit.MovementUnitNotTile(newCoordinate, EndProcessing));
         }
 
         private void EndProcessing()
