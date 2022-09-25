@@ -6,11 +6,10 @@ namespace GameGrid.Source.Tiles
 {
     public class GroundTile : BaseSquareTile
     {
-        [SerializeField] private GroundType groundType = GroundType.Grass;
-
         [SerializeField] private Text coordText;
         
         [SerializeField] private int cost = 1;
+        [SerializeField] private bool isObstacle = false;
         
         public override Vector3Int Coordinate
         {
@@ -22,18 +21,12 @@ namespace GameGrid.Source.Tiles
             get => base.Coordinate;
         }
 
-        public bool IsObstacle() => groundType switch
-        {
-            GroundType.Mountain => true,
-            GroundType.River => true,
-            GroundType.Building => true,
-            _ => false
-        };
+        public bool IsObstacle() => isObstacle;
         
         public int GetCost() => cost;
     }
     
-    public enum GroundType
+    /*public enum GroundType
     {
         Grass,
         Road,
@@ -41,5 +34,5 @@ namespace GameGrid.Source.Tiles
         River,
         Building,
         Bridge
-    }
+    }*/
 }

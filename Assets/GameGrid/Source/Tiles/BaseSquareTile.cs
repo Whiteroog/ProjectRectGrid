@@ -6,7 +6,7 @@ namespace GameGrid.Source.Tiles
 {
     public class BaseSquareTile : MonoBehaviour
     {
-        [SerializeField] private TileType tileType = TileType.None;
+        [SerializeField] private TileType tileType = TileType.Ground;
 
         private BaseSquareTileManager _baseSquareTileManager;
 
@@ -25,12 +25,11 @@ namespace GameGrid.Source.Tiles
         }
 
         public TileType GetTileType() => tileType;
-        public BaseSquareTileManager GetTileManager() => _baseSquareTileManager;
+        public TManager GetTileManager<TManager>() where TManager : class => _baseSquareTileManager as TManager;
     }
 
     public enum TileType
     {
-        None,
         Ground,
         UnitPlayer,
         UnitEnemy,

@@ -12,8 +12,8 @@ namespace GameGrid.Source.Managers
     {
         private Tilemap _tilemap;
         protected GridSystem GridSystem;
-        
-        protected Dictionary<Vector3Int, BaseSquareTile> CachedTiles = new();
+
+        private Dictionary<Vector3Int, BaseSquareTile> _cachedTiles = new();
 
         protected virtual void Awake()
         {
@@ -28,24 +28,24 @@ namespace GameGrid.Source.Managers
             }
         }
 
-        public void CachingTile(BaseSquareTile tile)
+        protected void CachingTile(BaseSquareTile tile)
         {
             Vector3Int coordinatePlacedTile = _tilemap.LocalToCell(tile.transform.localPosition);
             tile.SetupTile(this, coordinatePlacedTile);
-            CachedTiles[coordinatePlacedTile] = tile;
-        }
-        
-        public void SetTileCoordinate(BaseSquareTile tile, Vector3Int newCoordinate)
-        {
-            CachedTiles.Remove(tile.Coordinate);
-            tile.Coordinate = newCoordinate;
-            CachedTiles[newCoordinate] = tile;
+            _cachedTiles[coordinatePlacedTile] = tile;
         }
 
-        public BaseSquareTile GetTile(Vector3Int coordinate)
+        protected void SetTileCoordinate(BaseSquareTile tile, Vector3Int newCoordinate)
         {
-            CachedTiles.TryGetValue(coordinate, out BaseSquareTile returnedTile);
-            return returnedTile;
+            _cachedTiles.Remove(tile.Coordinate);
+            tile.Coordinate = newCoordinate;
+            _cachedTiles[newCoordinate] = tile;
+        }
+
+        public TTile GetTile<TTile>(Vector3Int coordinate) where TTile : class
+        {
+            _cachedTiles.TryGetValue(coordinate, out BaseSquareTile returnedTile);
+            return returnedTile as TTile;
         }
     }
 }

@@ -14,7 +14,6 @@ namespace GameGrid.Source.System
             TileManagers.AddRange(GetComponentsInChildren<BaseSquareTileManager>());
         }
 
-        public TManager GetManager<TManager>() where TManager : class => 
-            TileManagers.Find(manager => manager is TManager) as TManager;
+        public TManager GetManager<TManager>() where TManager : class => TileManagers.Find(manager => manager is TManager) as TManager;
     }
 }

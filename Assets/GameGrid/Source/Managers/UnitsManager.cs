@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GameGrid.Source.Tiles;
@@ -10,68 +11,83 @@ namespace GameGrid.Source.Managers
     {
         public event Action<UnitsManager, bool> OnProcessing;
 
-        private Dictionary<Vector3Int, Vector3Int?> _cachedPathways = new();
+        private Dictionary<Vector3Int, Vector3Int> _cachedPathways = new();
 
-        public void MoveUnit(UnitTile unit ,Vector3Int newCoordinate)
+        private GroundTilesManager _groundTilesManager;
+
+        protected override void Awake()
+        {
+            base.Awake();
+
+            _groundTilesManager = GridSystem.GetManager<GroundTilesManager>();
+        }
+
+        public void MoveUnit(UnitTile unitTile ,Vector3Int targetCoordinate)
+        {
+            Vector3Int[] pathway = GeneratePathway(targetCoordinate);
+
+            StartCoroutine(MovementUnit(unitTile, pathway));
+        }
+
+        private IEnumerator MovementUnit(UnitTile unit, Vector3Int[] pathway)
         {
             OnProcessing?.Invoke(this, true);
             
-            StartCoroutine(unit.MovementUnit(GeneratePathway(newCoordinate), EndProcessing));
-            // StartCoroutine(unit.MovementUnitNotTile(newCoordinate, EndProcessing));
-        }
+            for (int i = 1; i < pathway.Length; i++)
+            {
+                Vector3Int start = pathway[i - 1];
+                Vector3Int end = pathway[i];
 
-        private void EndProcessing()
-        {
+                yield return StartCoroutine(unit.MoveAnimate(start, end));
+
+                SetTileCoordinate(unit, end);
+            }
+            
             OnProcessing?.Invoke(this, false);
         }
 
-        public List<Vector3Int> GeneratePathway(Vector3Int targetNode)
+        private Vector3Int[] GeneratePathway(Vector3Int targetNode)
         {
-            if (_cachedPathways.Count == 0)
-                return new List<Vector3Int>();
+            Stack<Vector3Int> pathway = new Stack<Vector3Int>();
             
-            List<Vector3Int> pathway = new List<Vector3Int>() { targetNode };
-
+            pathway.Push(targetNode);
             Vector3Int nextNode = targetNode;
-            while (_cachedPathways[nextNode] is not null)
-            {
-                pathway.Add(_cachedPathways[nextNode].Value);
-                nextNode = _cachedPathways[nextNode].Value;
-            }
-            pathway.Reverse();
 
-            return pathway;
+            while (nextNode != _cachedPathways[nextNode])
+            {
+                pathway.Push(_cachedPathways[nextNode]);
+                nextNode = pathway.Peek();
+            }
+
+            return pathway.ToArray();
         }
 
         public void GeneratePossibleWays(SelectManager selectManager, UnitTile unit)
         {
-            GroundTilesManager groundTilesManager = GridSystem.GetManager<GroundTilesManager>();
+            _cachedPathways = BreadthFirstSearch(unit.Coordinate, unit.GetMovementPoints());
+            
+            Vector3Int[] possibleWays = _cachedPathways.Keys.ToArray();
 
-            _cachedPathways = BreadthFirstSearch(groundTilesManager, unit.Coordinate, unit.GetMovementPoints());
-            
-            List<Vector3Int> possibleWays = _cachedPathways.Keys.ToList();
-            possibleWays.RemoveAt(0);
-            
-            foreach(Vector3Int possibleWay in possibleWays)
+            for (int i = 1; i < possibleWays.Length; i++)
             {
-                selectManager.CreatePointPossibleTiles(possibleWay);
+                selectManager.CreatePointPossibleTiles(possibleWays[i]);
             }
         }
 
-        private Dictionary<Vector3Int, Vector3Int?> BreadthFirstSearch(GroundTilesManager groundTilesManager, Vector3Int startNode, int movementPoints)
+        private Dictionary<Vector3Int, Vector3Int> BreadthFirstSearch(Vector3Int startNode, int movementPoints)
         {
-            Dictionary<Vector3Int, Vector3Int?> visitedNodes = new Dictionary<Vector3Int, Vector3Int?>();
+            Dictionary<Vector3Int, Vector3Int> visitedNodes = new Dictionary<Vector3Int, Vector3Int>();
             Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
             Queue<Vector3Int> nodesToVisitQueue = new Queue<Vector3Int>();
             
             nodesToVisitQueue.Enqueue(startNode);
             costSoFar[startNode] = 0;
-            visitedNodes[startNode] = null;
+            visitedNodes[startNode] = startNode;
 
             while (nodesToVisitQueue.Count > 0)
             {
                 Vector3Int currentNode = nodesToVisitQueue.Dequeue();
-                foreach (GroundTile neighbourTile in groundTilesManager.GetNeighboursFor(currentNode))
+                foreach (GroundTile neighbourTile in _groundTilesManager.GetNeighboursFor(currentNode))
                 {
                     if(neighbourTile.IsObstacle())
                         continue;

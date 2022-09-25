@@ -33,21 +33,6 @@ namespace GameGrid.Source.Controllers
             CameraScrolling();
             OnClicked();
         }
-        
-        // ReSharper disable Unity.PerformanceAnalysis
-        private void OnClicked()
-        {
-            if (Input.GetMouseButtonDown(0))
-            {
-                Vector3 clickWorldPosition = _playerCamera.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(clickWorldPosition, Vector2.zero);
-                BaseSquareTile selectedTile = hit.collider?.gameObject.GetComponent<BaseSquareTile>();
-                if (selectedTile != null)
-                {
-                    onClickTile.Invoke(selectedTile);
-                }
-            }
-        }
 
         private void CameraScrolling()
         {
@@ -69,6 +54,21 @@ namespace GameGrid.Source.Controllers
             Vector3 deltaMovement = new Vector3(horizontalMove, verticalMove, 0.0f) * (movementSpeed * Time.deltaTime);
 
             transform.position += deltaMovement;
+        }
+        
+        // ReSharper disable Unity.PerformanceAnalysis
+        private void OnClicked()
+        {
+            if (Input.GetMouseButtonDown(0))
+            {
+                Vector3 clickWorldPosition = _playerCamera.ScreenToWorldPoint(Input.mousePosition);
+                RaycastHit2D hit = Physics2D.Raycast(clickWorldPosition, Vector2.zero);
+                BaseSquareTile selectedTile = hit.collider?.gameObject.GetComponent<BaseSquareTile>();
+                if (selectedTile is not null)
+                {
+                    onClickTile.Invoke(selectedTile);
+                }
+            }
         }
     }
 }

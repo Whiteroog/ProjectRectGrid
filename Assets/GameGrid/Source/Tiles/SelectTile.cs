@@ -16,7 +16,6 @@ namespace GameGrid.Source.Tiles
                 return _;
             }
         }
-        public bool IsSelecting() => _selectingUnit is not null;
         public void ClearSelecting() => _selectingUnit = null;
     }
 }

@@ -125,9 +125,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d455d694ebb84bedb6af4758b795a563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tilemapManager: {fileID: 0}
-  tileType: 1
+  tileType: 0
   coordText: {fileID: 4185943986095417541}
+  cost: 1
+  isObstacle: 0
 --- !u!1 &4243082367954542684
 GameObject:
   m_ObjectHideFlags: 0
