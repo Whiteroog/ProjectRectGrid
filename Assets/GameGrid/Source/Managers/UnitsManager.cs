@@ -14,19 +14,26 @@ namespace GameGrid.Source.Managers
 
         private Dictionary<GroundTile, GroundTile> _cachedPathways = new();
 
-        private GroundTilesManager _groundTilesManager;
-
         protected override void Awake()
         {
             base.Awake();
 
-            _groundTilesManager = GridManager.GetTileManager<GroundTilesManager>();
+            GroundTilesManager groundTilesManager = GridManager.GetTileManager<GroundTilesManager>();
 
             foreach (var unit in CachedTiles)
             {
-                GroundTile groundTile = _groundTilesManager.GetTile<GroundTile>(unit.Key);
+                GroundTile groundTile = groundTilesManager.GetTile<GroundTile>(unit.Key);
                 groundTile.SetOccupiedTile(unit.Value);
             }
+        }
+
+        private void SetTileCoordinate(GroundTile sourceTile, UnitTile unitTile, Vector3Int newCoordinate)
+        {
+            sourceTile.SetOccupiedTile(null);
+            
+            SetTileCoordinate(unitTile, newCoordinate);
+            
+            sourceTile.GetTileManager<GroundTilesManager>().GetTile<GroundTile>(newCoordinate).SetOccupiedTile(unitTile);
         }
 
         public void MoveUnit(UnitTile unitTile ,GroundTile targetTile)
@@ -45,11 +52,10 @@ namespace GameGrid.Source.Managers
                 Vector3Int end = pathway[i].Coordinate;
 
                 yield return StartCoroutine(unit.AnimateMovement(start, end));
+                
+                SetTileCoordinate(pathway[i], unit, end);
             }
-            
-            // temporarily
-            SetTileCoordinate(unit, pathway[^1].Coordinate);
-            
+
             OnProcessing?.Invoke(this, false);
         }
 
@@ -69,7 +75,7 @@ namespace GameGrid.Source.Managers
             return pathway.ToArray();
         }
 
-        public void GeneratePossibleWays(GroundTile sourceTile, UnitTile unit)
+        public void GeneratePossibleWays(SelectManager selectManager, GroundTile sourceTile, UnitTile unit)
         {
             _cachedPathways = BreadthFirstSearch(sourceTile, unit.GetMovementPoints());
             
@@ -77,12 +83,14 @@ namespace GameGrid.Source.Managers
 
             for (int i = 1; i < possibleWays.Length; i++)
             {
-                possibleWays[i].TileState.SetBorderColor(SelectType.PossibleWays);
+                selectManager.ShowPossibleWays(possibleWays[i]);
             }
         }
 
         private Dictionary<GroundTile, GroundTile> BreadthFirstSearch(GroundTile startTile, int movementPoints)
         {
+            GroundTilesManager groundTilesManager = startTile.GetTileManager<GroundTilesManager>();
+            
             Dictionary<GroundTile, GroundTile> visitedTiles = new Dictionary<GroundTile, GroundTile>();
             Dictionary<GroundTile, int> costSoFar = new Dictionary<GroundTile, int>();
             Queue<GroundTile> tilesToVisit = new Queue<GroundTile>();
@@ -94,7 +102,7 @@ namespace GameGrid.Source.Managers
             while (tilesToVisit.Count > 0)
             {
                 GroundTile currentTile = tilesToVisit.Dequeue();
-                foreach (GroundTile neighbourTile in _groundTilesManager.GetNeighboursFor(currentTile))
+                foreach (GroundTile neighbourTile in groundTilesManager.GetNeighboursFor(currentTile))
                 {
                     if(neighbourTile.IsObstacle())
                         continue;

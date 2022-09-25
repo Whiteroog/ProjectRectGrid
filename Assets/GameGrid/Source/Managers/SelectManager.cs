@@ -8,18 +8,37 @@ namespace GameGrid.Source.Managers
 {
     public class SelectManager : MonoBehaviour
     {
-        [SerializeField] private GridManager gridManager;
+        private GridManager _gridManager;
         private GroundTilesManager _groundTilesManager;
 
         private bool _isProcessing = false;
 
-        private GroundTile _selectTile;
-
         private UnitTile _selectUnit;
+
+        private List<GroundTile> _showPossibleWays = new List<GroundTile>();
+
+        private GroundTile _selectTile;
 
         private void Awake()
         {
-            _groundTilesManager = gridManager.GetTileManager<GroundTilesManager>();
+            _gridManager = GetComponentInParent<GridManager>();
+            _groundTilesManager = _gridManager.GetTileManager<GroundTilesManager>();
+        }
+
+        public void ShowPossibleWays(GroundTile groundTile)
+        {
+            _showPossibleWays.Add(groundTile);
+            groundTile.TileState.SetBorderColor(SelectType.PossibleWays);
+        }
+
+        public void ClearPossibleWays()
+        {
+            foreach (GroundTile groundTile in _showPossibleWays)
+            {
+                groundTile.TileState.SetBorderColor(SelectType.Default);
+            }
+            
+            _showPossibleWays.Clear();
         }
 
         // Event from CameraController
@@ -28,7 +47,15 @@ namespace GameGrid.Source.Managers
             if (_isProcessing)
                 return;
 
-            _selectTile = _groundTilesManager.GetTile<GroundTile>(selectedTile.Coordinate);
+            GroundTile newSelectTile = _groundTilesManager.GetTile<GroundTile>(selectedTile.Coordinate);
+            
+            if (_selectTile is not null)
+            {
+                if(_selectTile.Coordinate != newSelectTile.Coordinate)
+                    _selectTile.TileState.SetBorderColor(SelectType.Default);
+            }
+
+            _selectTile = newSelectTile;
 
             switch (selectedTile.GetTileType())
             {
@@ -54,13 +81,11 @@ namespace GameGrid.Source.Managers
                                 unitsManager.OnProcessing += SetProcessing;
                                 unitsManager.MoveUnit(_selectUnit, _selectTile);
                             }
-
-                            _selectUnit = null;
-
                             break;
                         }
                     }
-
+                    _selectUnit = null;
+                    ClearPossibleWays();
                     break;
                 }
                 case TileType.Unit:
@@ -74,13 +99,14 @@ namespace GameGrid.Source.Managers
                             _selectUnit = _selectTile.GetOccupiedTile<UnitTile>();
                             UnitsManager unitsManager = _selectUnit.GetTileManager<UnitsManager>();
 
-                            unitsManager.GeneratePossibleWays(_selectTile, _selectUnit);
+                            unitsManager.GeneratePossibleWays(this, _selectTile, _selectUnit);
                             break;
                         }
                         case SelectType.Select:
                         {
                             _selectTile.TileState.SetBorderColor(SelectType.Default);
-
+                            ClearPossibleWays();
+                            
                             _selectUnit = null;
                             break;
                         }
