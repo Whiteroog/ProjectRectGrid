@@ -22,12 +22,16 @@ namespace GameGrid.Source.Tiles
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
 
-        public IEnumerator MoveAnimate(Vector3Int start, Vector3Int end)
+        public int GetMovementPoints() => movementPoints;
+
+        public IEnumerator AnimateMovement(Vector3Int start, Vector3Int end)
         {
             _unitAnimator.SetBool("IsMove", true);
 
             Vector3 direction = end - start;
+            
             float side = Vector3.Dot(direction.normalized, Vector3.right);
+            
             if (!Mathf.Approximately(side, 0.0f))
                 _spriteRenderer.flipX = side < 0.0f;
 
@@ -39,7 +43,5 @@ namespace GameGrid.Source.Tiles
 
             _unitAnimator.SetBool("IsMove", false);
         }
-
-        public int GetMovementPoints() => movementPoints;
     }
 }

@@ -19,13 +19,18 @@ namespace GameGrid.Source.Managers
         {
             base.Awake();
 
-            _groundTilesManager = GridSystem.GetManager<GroundTilesManager>();
+            _groundTilesManager = GridManager.GetTileManager<GroundTilesManager>();
+
+            foreach (var unit in CachedTiles)
+            {
+                GroundTile groundTile = _groundTilesManager.GetTile<GroundTile>(unit.Key);
+                groundTile.SetOccupiedTile(unit.Value);
+            }
         }
 
         public void MoveUnit(UnitTile unitTile ,Vector3Int targetCoordinate)
         {
             Vector3Int[] pathway = GeneratePathway(targetCoordinate);
-
             StartCoroutine(MovementUnit(unitTile, pathway));
         }
 
@@ -38,10 +43,10 @@ namespace GameGrid.Source.Managers
                 Vector3Int start = pathway[i - 1];
                 Vector3Int end = pathway[i];
 
-                yield return StartCoroutine(unit.MoveAnimate(start, end));
-
-                SetTileCoordinate(unit, end);
+                yield return StartCoroutine(unit.AnimateMovement(start, end));
             }
+            
+            SetTileCoordinate(unit, pathway[^1]);
             
             OnProcessing?.Invoke(this, false);
         }
@@ -70,7 +75,7 @@ namespace GameGrid.Source.Managers
 
             for (int i = 1; i < possibleWays.Length; i++)
             {
-                selectManager.CreatePointPossibleTiles(possibleWays[i]);
+                //selectManager.CreatePointPossibleTiles(possibleWays[i]);
             }
         }
 

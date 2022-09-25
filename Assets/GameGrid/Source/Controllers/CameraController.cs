@@ -63,6 +63,7 @@ namespace GameGrid.Source.Controllers
             {
                 Vector3 clickWorldPosition = _playerCamera.ScreenToWorldPoint(Input.mousePosition);
                 RaycastHit2D hit = Physics2D.Raycast(clickWorldPosition, Vector2.zero);
+                
                 BaseSquareTile selectedTile = hit.collider?.gameObject.GetComponent<BaseSquareTile>();
                 if (selectedTile is not null)
                 {

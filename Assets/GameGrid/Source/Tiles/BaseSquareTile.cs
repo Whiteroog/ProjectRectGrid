@@ -6,12 +6,11 @@ namespace GameGrid.Source.Tiles
 {
     public class BaseSquareTile : MonoBehaviour
     {
-        [SerializeField] private TileType tileType = TileType.Ground;
+        [SerializeField] private TileType tileType = TileType.None;
 
-        private BaseSquareTileManager _baseSquareTileManager;
+        private BaseSquareTileManager _tileManager;
 
         private Vector3Int _coordinate;
-
         public virtual Vector3Int Coordinate
         {
             set => transform.position = _coordinate = value;
@@ -20,20 +19,18 @@ namespace GameGrid.Source.Tiles
 
         public void SetupTile(BaseSquareTileManager newBaseSquareTileManager, Vector3Int newCoordinate)
         {
-            _baseSquareTileManager = newBaseSquareTileManager;
+            _tileManager = newBaseSquareTileManager;
             Coordinate = newCoordinate;
         }
 
         public TileType GetTileType() => tileType;
-        public TManager GetTileManager<TManager>() where TManager : class => _baseSquareTileManager as TManager;
+        public TManager GetTileManager<TManager>() where TManager : class => _tileManager as TManager;
     }
 
     public enum TileType
     {
+        None,
         Ground,
-        UnitPlayer,
-        UnitEnemy,
-        Select,
-        PointWay
+        Unit
     }
 }

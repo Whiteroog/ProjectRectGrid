@@ -7,16 +7,23 @@ namespace GameGrid.Source.Managers
 {
     public class GroundTilesManager : BaseSquareTileManager
     {
+        protected override void Awake()
+        {
+            base.Awake();
+        }
+
         public List<GroundTile> GetNeighboursFor(Vector3Int coordinate)
         {
             List<GroundTile> neighboursTileCoordinates = new List<GroundTile>();
 
             foreach (Vector3Int direction in _directionsSquareTile)
             {
-                if(GetTile<GroundTile>(coordinate + direction) is null)
+                GroundTile groundTile = GetTile<GroundTile>(coordinate + direction);
+                
+                if(groundTile is null)
                     continue;
                 
-                neighboursTileCoordinates.Add(GetTile<GroundTile>(coordinate + direction));
+                neighboursTileCoordinates.Add(groundTile);
             }
 
             return neighboursTileCoordinates;
