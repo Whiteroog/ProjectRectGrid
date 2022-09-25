@@ -126,8 +126,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileType: 0
-  coordinateText: {fileID: 0}
-  costText: {fileID: 0}
+  coordinateText: {fileID: 6283820950485354196}
+  costText: {fileID: 8927073942856085766}
   cost: 0
   isObstacle: 0
 --- !u!1 &925191939197635635
@@ -142,7 +142,7 @@ GameObject:
   - component: {fileID: 2543237797695744643}
   - component: {fileID: 6152208339992083356}
   m_Layer: 5
-  m_Name: Border3
+  m_Name: BorderLine3
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -215,6 +215,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7663693045326118408}
+  - component: {fileID: 2746629894663469848}
   m_Layer: 5
   m_Name: SelectBorder
   m_TagString: Untagged
@@ -246,6 +247,21 @@ RectTransform:
   m_AnchoredPosition: {x: 0, y: 0}
   m_SizeDelta: {x: 0, y: 0}
   m_Pivot: {x: 0.5, y: 0.5}
+--- !u!114 &2746629894663469848
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1260354501431228768}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: b30d053ecddcdb64db970180847ca44e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  defaultColor: {r: 0.3529412, g: 0.3529412, b: 0.3529412, a: 0}
+  selectColor: {r: 1, g: 1, b: 1, a: 0}
+  possibleWaysColor: {r: 1, g: 0.99296916, b: 0, a: 0}
 --- !u!1 &2133735315970595044
 GameObject:
   m_ObjectHideFlags: 0
@@ -370,7 +386,7 @@ GameObject:
   - component: {fileID: 4963375634903641843}
   - component: {fileID: 2528313444133293216}
   m_Layer: 5
-  m_Name: Border1
+  m_Name: BorderLine1
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -446,7 +462,7 @@ GameObject:
   - component: {fileID: 8232948808851317938}
   - component: {fileID: 9087475871381420395}
   m_Layer: 5
-  m_Name: Border2
+  m_Name: BorderLine2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -522,7 +538,7 @@ GameObject:
   - component: {fileID: 90840930432851137}
   - component: {fileID: 944460774750908407}
   m_Layer: 5
-  m_Name: Border4
+  m_Name: BorderLine4
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

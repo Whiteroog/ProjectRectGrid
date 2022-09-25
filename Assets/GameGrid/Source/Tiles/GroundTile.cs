@@ -1,5 +1,6 @@
 ﻿using System;
 using GameGrid.Source.Managers;
+using GameGrid.Source.Utils;
 using UnityEngine;
 using UnityEngine.Serialization;
 using UnityEngine.UI;
@@ -16,6 +17,9 @@ namespace GameGrid.Source.Tiles
 
         private BaseSquareTile _occupiedTile;
 
+        private TileState _tileState;
+        public TileState TileState => _tileState;
+        
         public override Vector3Int Coordinate
         {
             set
@@ -28,6 +32,7 @@ namespace GameGrid.Source.Tiles
 
         private void Awake()
         {
+            _tileState = GetComponentInChildren<TileState>();
             costText.text = cost.ToString();
         }
 

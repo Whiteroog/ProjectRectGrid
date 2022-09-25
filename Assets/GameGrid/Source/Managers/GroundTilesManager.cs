@@ -12,13 +12,13 @@ namespace GameGrid.Source.Managers
             base.Awake();
         }
 
-        public List<GroundTile> GetNeighboursFor(Vector3Int coordinate)
+        public List<GroundTile> GetNeighboursFor(GroundTile sourceTile)
         {
             List<GroundTile> neighboursTileCoordinates = new List<GroundTile>();
 
             foreach (Vector3Int direction in _directionsSquareTile)
             {
-                GroundTile groundTile = GetTile<GroundTile>(coordinate + direction);
+                GroundTile groundTile = GetTile<GroundTile>(sourceTile.Coordinate + direction);
                 
                 if(groundTile is null)
                     continue;
