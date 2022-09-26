@@ -13,7 +13,7 @@ namespace GameGrid.Source.Controllers
         [SerializeField] private float scrollSizeMin = 3.0f;
         [SerializeField] private float scrollSizeMax = 8.0f;
 
-        public UnityEvent<BaseRectTile> onClickTile;
+        public UnityEvent<Vector3> onClickTile;
         
         private Camera _playerCamera;
 
@@ -61,14 +61,7 @@ namespace GameGrid.Source.Controllers
         {
             if (Input.GetMouseButtonDown(0))
             {
-                Vector3 clickWorldPosition = _playerCamera.ScreenToWorldPoint(Input.mousePosition);
-                RaycastHit2D hit = Physics2D.Raycast(clickWorldPosition, Vector2.zero);
-                
-                BaseRectTile selectedTile = hit.collider?.gameObject.GetComponent<BaseRectTile>();
-                if (selectedTile is not null)
-                {
-                    onClickTile.Invoke(selectedTile);
-                }
+                onClickTile.Invoke(_playerCamera.ScreenToWorldPoint(Input.mousePosition));
             }
         }
     }

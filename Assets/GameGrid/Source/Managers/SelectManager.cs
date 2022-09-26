@@ -8,113 +8,51 @@ namespace GameGrid.Source.Managers
 {
     public class SelectManager : MonoBehaviour
     {
-        private GridManager _gridManager;
-        private GroundTilesManager _groundTilesManager;
-
         private bool _isProcessing = false;
 
         private UnitTile _selectUnit;
-
+        private GroundTile _pastSelectTile;
         private List<GroundTile> _showPossibleWays = new List<GroundTile>();
 
-        private GroundTile _selectTile;
+        private GroundTilesManager _groundTilesManager;
 
         private void Awake()
         {
-            _gridManager = GetComponentInParent<GridManager>();
-            _groundTilesManager = _gridManager.GetTileManager<GroundTilesManager>();
+            _groundTilesManager = GetComponentInParent<GroundTilesManager>();
         }
 
-        public void ShowPossibleWays(GroundTile groundTile)
+        public void ShowPossibleWays(Vector3Int coordinate)
         {
+            GroundTile groundTile = _groundTilesManager.GetGroundTile(coordinate);
+            groundTile.TileState.SetBorderColor(TypeSelect.PossibleWays);
             _showPossibleWays.Add(groundTile);
-            groundTile.TileState.SetBorderColor(SelectType.PossibleWays);
         }
 
         public void ClearPossibleWays()
         {
+            if (_showPossibleWays.Count == 0)
+                return;
+
             foreach (GroundTile groundTile in _showPossibleWays)
             {
-                groundTile.TileState.SetBorderColor(SelectType.Default);
+                groundTile.TileState.SetBorderColor(TypeSelect.Default);
             }
             
             _showPossibleWays.Clear();
         }
 
         // Event from CameraController
-        public void SelectTile(BaseRectTile selectedTile)
+        public void DefineTile(Vector3 clickPosition)
         {
             if (_isProcessing)
                 return;
 
-            GroundTile newSelectTile = _groundTilesManager.GetTile<GroundTile>(selectedTile.Coordinate);
-            
-            if (_selectTile is not null)
-            {
-                if(_selectTile.Coordinate != newSelectTile.Coordinate)
-                    _selectTile.TileState.SetBorderColor(SelectType.Default);
-            }
+            GroundTile selectTile = _groundTilesManager.GetGroundTile(_groundTilesManager.Tilemap.WorldToCell(clickPosition));
 
-            _selectTile = newSelectTile;
+            if (selectTile is null)
+                return;
 
-            switch (selectedTile.GetTileType())
-            {
-                case TileType.Ground:
-                {
-                    switch (_selectTile.TileState.CurrentSelectType)
-                    {
-                        case SelectType.Default:
-                        {
-                            _selectTile.TileState.SetBorderColor(SelectType.Select);
-                            break;
-                        }
-                        case SelectType.Select:
-                        {
-                            _selectTile.TileState.SetBorderColor(SelectType.Default);
-                            break;
-                        }
-                        case SelectType.PossibleWays:
-                        {
-                            UnitsManager unitsManager = _selectUnit.GetTileManager<UnitsManager>();
-                            if (unitsManager is not null)
-                            {
-                                unitsManager.OnProcessing += SetProcessing;
-                                unitsManager.MoveUnit(_selectUnit, _selectTile);
-                            }
-                            break;
-                        }
-                    }
-                    _selectUnit = null;
-                    ClearPossibleWays();
-                    break;
-                }
-                case TileType.Unit:
-                {
-                    switch (_selectTile.TileState.CurrentSelectType)
-                    {
-                        case SelectType.Default:
-                        {
-                            _selectTile.TileState.SetBorderColor(SelectType.Select);
-
-                            _selectUnit = _selectTile.GetOccupiedTile<UnitTile>();
-                            UnitsManager unitsManager = _selectUnit.GetTileManager<UnitsManager>();
-
-                            unitsManager.GeneratePossibleWays(this, _selectTile, _selectUnit);
-                            break;
-                        }
-                        case SelectType.Select:
-                        {
-                            _selectTile.TileState.SetBorderColor(SelectType.Default);
-                            ClearPossibleWays();
-                            
-                            _selectUnit = null;
-                            break;
-                        }
-                    }
-
-                    break;
-                }
-            }
+            // TODO ddoing
         }
 
         private void SetProcessing(object sender, bool state)
