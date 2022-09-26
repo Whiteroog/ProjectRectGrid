@@ -13,21 +13,21 @@ namespace GameGrid.Source.Utils
 
         private Image[] _borderLines;
         
-        public SelectType CurrentSelectType { private set; get; }
+        public TypeSelect SelectType { private set; get; }
 
         private void Awake()
         {
             _borderLines = GetComponentsInChildren<Image>();
         }
 
-        public void SetBorderColor(SelectType selectType)
+        public void SetBorderColor(TypeSelect selectType)
         {
-            CurrentSelectType = selectType;
+            SelectType = selectType;
             Color setNewColor = selectType switch
             {
-                SelectType.Default => defaultColor,
-                SelectType.Select => selectColor,
-                SelectType.PossibleWays => possibleWaysColor,
+                TypeSelect.Default => defaultColor,
+                TypeSelect.Select => selectColor,
+                TypeSelect.PossibleWays => possibleWaysColor,
                 _ => defaultColor
             };
 
@@ -38,7 +38,7 @@ namespace GameGrid.Source.Utils
         }
     }
 
-    public enum SelectType
+    public enum TypeSelect
     {
         Default,
         Select,

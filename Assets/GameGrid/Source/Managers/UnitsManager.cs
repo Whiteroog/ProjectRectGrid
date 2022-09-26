@@ -8,127 +8,103 @@ using UnityEngine;
 
 namespace GameGrid.Source.Managers
 {
-    public class UnitsManager : BaseRectTileManager
+    public class UnitsManager : MonoBehaviour
     {
         public event Action<UnitsManager, bool> OnProcessing;
 
-        private Dictionary<GroundTile, GroundTile> _cachedPathways = new();
+        private Dictionary<Vector3Int, Vector3Int> _pathways;
 
-        protected override void Awake()
+        private GroundTilesManager _groundTilesManager;
+
+        private void Awake()
         {
-            base.Awake();
-
-            GroundTilesManager groundTilesManager = GridManager.GetTileManager<GroundTilesManager>();
-
-            foreach (var unit in CachedTiles)
-            {
-                GroundTile groundTile = groundTilesManager.GetTile<GroundTile>(unit.Key);
-                groundTile.SetOccupiedTile(unit.Value);
-            }
+            _groundTilesManager = GetComponentInParent<GroundTilesManager>();
+            _pathways = new Dictionary<Vector3Int, Vector3Int>();
         }
 
-        private void SetTileCoordinate(GroundTile sourceTile, UnitTile unitTile, Vector3Int newCoordinate)
-        {
-            sourceTile.SetOccupiedTile(null);
-            
-            SetTileCoordinate(unitTile, newCoordinate);
-            
-            sourceTile.GetTileManager<GroundTilesManager>().GetTile<GroundTile>(newCoordinate).SetOccupiedTile(unitTile);
-        }
-
-        public void MoveUnit(UnitTile unitTile ,GroundTile targetTile)
-        {
-            GroundTile[] pathway = GeneratePathway(targetTile);
-            StartCoroutine(MovementUnit(unitTile, pathway));
-        }
-
-        private IEnumerator MovementUnit(UnitTile unit, GroundTile[] pathway)
+        public void MoveUnit(UnitTile unit ,Vector3Int targetCoordinate)
         {
             OnProcessing?.Invoke(this, true);
-            
-            for (int i = 1; i < pathway.Length; i++)
-            {
-                Vector3Int start = pathway[i - 1].Coordinate;
-                Vector3Int end = pathway[i].Coordinate;
+            StartCoroutine(unit.Move(GeneratePathway(targetCoordinate), EndMoveUnit));
+        }
 
-                yield return StartCoroutine(unit.AnimateMovement(start, end));
-                
-                SetTileCoordinate(pathway[i], unit, end);
-            }
+        private void EndMoveUnit(UnitTile unit, Vector3Int targetCoordiante)
+        {
+            _groundTilesManager.GetGroundTile(unit.Coordinate).OccupiedTileByUnit = null;
+            unit.Coordinate = targetCoordiante;
+            _groundTilesManager.GetGroundTile(targetCoordiante).OccupiedTileByUnit = unit;
 
             OnProcessing?.Invoke(this, false);
         }
 
-        private GroundTile[] GeneratePathway(GroundTile targetTile)
+        private Vector3Int[] GeneratePathway(Vector3Int pointCoordinate)
         {
-            Stack<GroundTile> pathway = new Stack<GroundTile>();
-            
-            pathway.Push(targetTile);
-            GroundTile nextTile = targetTile;
+            Stack<Vector3Int> pathway = new Stack<Vector3Int>();
 
-            while (nextTile != _cachedPathways[nextTile])
+            while (pointCoordinate != _pathways[pointCoordinate])
             {
-                pathway.Push(_cachedPathways[nextTile]);
-                nextTile = pathway.Peek();
+                pathway.Push(pointCoordinate);
+                pointCoordinate = _pathways[pointCoordinate];
+
             }
 
             return pathway.ToArray();
         }
 
-        public void GeneratePossibleWays(SelectManager selectManager, GroundTile sourceTile, UnitTile unit)
+        public void GeneratePossibleWays(SelectManager selectManager, Vector3Int sourceCoordinate, int movementPoints)
         {
-            _cachedPathways = BreadthFirstSearch(sourceTile, unit.GetMovementPoints());
+            _pathways = BreadthFirstSearch(sourceCoordinate, movementPoints);
             
-            GroundTile[] possibleWays = _cachedPathways.Keys.ToArray();
+            Vector3Int[] possibleCoordinates = _pathways.Keys.ToArray();
 
-            for (int i = 1; i < possibleWays.Length; i++)
+            for (int i = 1; i < possibleCoordinates.Length; i++)
             {
-                selectManager.ShowPossibleWays(possibleWays[i]);
+                selectManager.ShowPossibleWays(possibleCoordinates[i]);
             }
         }
 
-        private Dictionary<GroundTile, GroundTile> BreadthFirstSearch(GroundTile startTile, int movementPoints)
+        private Dictionary<Vector3Int, Vector3Int> BreadthFirstSearch(Vector3Int startCoordinate, int movementPoints)
         {
-            GroundTilesManager groundTilesManager = startTile.GetTileManager<GroundTilesManager>();
+            Dictionary<Vector3Int, Vector3Int> visitedCoordinate = new Dictionary<Vector3Int, Vector3Int>();
+            Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
+            Queue<Vector3Int> coordinateToVisit = new Queue<Vector3Int>();
             
-            Dictionary<GroundTile, GroundTile> visitedTiles = new Dictionary<GroundTile, GroundTile>();
-            Dictionary<GroundTile, int> costSoFar = new Dictionary<GroundTile, int>();
-            Queue<GroundTile> tilesToVisit = new Queue<GroundTile>();
-            
-            tilesToVisit.Enqueue(startTile);
-            costSoFar[startTile] = 0;
-            visitedTiles[startTile] = startTile;
+            coordinateToVisit.Enqueue(startCoordinate);
+            costSoFar[startCoordinate] = 0;
+            visitedCoordinate[startCoordinate] = startCoordinate;
 
-            while (tilesToVisit.Count > 0)
+            while (coordinateToVisit.Count > 0)
             {
-                GroundTile currentTile = tilesToVisit.Dequeue();
-                foreach (GroundTile neighbourTile in groundTilesManager.GetNeighboursFor(currentTile))
+                Vector3Int currentCoordinate = coordinateToVisit.Dequeue();
+                foreach (GroundTile neighbourTile in _groundTilesManager.GetNeighboursFor(currentCoordinate))
                 {
                     if(neighbourTile.IsObstacle())
                         continue;
 
                     int nodeCost = neighbourTile.GetCost();
-                    int currentCost = costSoFar[currentTile];
+                    int currentCost = costSoFar[currentCoordinate];
                     int newCost = currentCost + nodeCost;
+
+                    Vector3Int neighbourCoordinate = neighbourTile.Coordinate;
 
                     if (newCost <= movementPoints)
                     {
-                        if (!visitedTiles.ContainsKey(neighbourTile))
+                        if (!visitedCoordinate.ContainsKey(neighbourCoordinate))
                         {
-                            visitedTiles[neighbourTile] = currentTile;
-                            costSoFar[neighbourTile] = newCost;
-                            tilesToVisit.Enqueue(neighbourTile);
+                            visitedCoordinate[neighbourCoordinate] = currentCoordinate;
+                            costSoFar[neighbourCoordinate] = newCost;
+                            coordinateToVisit.Enqueue(neighbourCoordinate);
                         }
-                        else if (costSoFar[neighbourTile] > newCost)
+                        else if (costSoFar[neighbourCoordinate] > newCost)
                         {
-                            costSoFar[neighbourTile] = newCost;
-                            visitedTiles[neighbourTile] = currentTile;
+                            costSoFar[neighbourCoordinate] = newCost;
+                            visitedCoordinate[neighbourCoordinate] = currentCoordinate;
                         }
                     }
                 }
             }
 
-            return visitedTiles;
+            return visitedCoordinate;
         }
     }
 }

@@ -6,9 +6,7 @@ namespace GameGrid.Source.Tiles
 {
     public class BaseRectTile : MonoBehaviour
     {
-        [SerializeField] private TileType tileType = TileType.None;
-
-        private BaseRectTileManager _tileManager;
+        [SerializeField] private TypeTile tileType = TypeTile.None;
 
         private Vector3Int _coordinate;
         public virtual Vector3Int Coordinate
@@ -17,17 +15,10 @@ namespace GameGrid.Source.Tiles
             get => _coordinate;
         }
 
-        public void SetupTile(BaseRectTileManager newBaseSquareTileManager, Vector3Int newCoordinate)
-        {
-            _tileManager = newBaseSquareTileManager;
-            Coordinate = newCoordinate;
-        }
-
-        public TileType GetTileType() => tileType;
-        public TManager GetTileManager<TManager>() where TManager : class => _tileManager as TManager;
+        public TypeTile GetTileType() => tileType;
     }
 
-    public enum TileType
+    public enum TypeTile
     {
         None,
         Ground,

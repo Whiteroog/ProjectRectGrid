@@ -15,10 +15,9 @@ namespace GameGrid.Source.Tiles
         [SerializeField] private int cost = 1;
         [SerializeField] private bool isObstacle = false;
 
-        private BaseRectTile _occupiedTile;
+        public UnitTile OccupiedTileByUnit { set; get; }
 
-        private TileState _tileState;
-        public TileState TileState => _tileState;
+        public TileState TileState { private set; get; }
         
         public override Vector3Int Coordinate
         {
@@ -32,15 +31,11 @@ namespace GameGrid.Source.Tiles
 
         private void Awake()
         {
-            _tileState = GetComponentInChildren<TileState>();
+            TileState = GetComponentInChildren<TileState>();
             costText.text = cost.ToString();
         }
 
         public bool IsObstacle() => isObstacle;
-        
         public int GetCost() => cost;
-
-        public void SetOccupiedTile(BaseRectTile newTile) => _occupiedTile = newTile;
-        public TTile GetOccupiedTile<TTile>() where TTile : class => _occupiedTile as TTile;
     }
 }
