@@ -126,9 +126,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   tileType: 0
-  coordinateText: {fileID: 6283820950485354196}
+  coordText: {fileID: 6283820950485354196}
   costText: {fileID: 8927073942856085766}
-  cost: 0
+  cost: 1
   isObstacle: 0
 --- !u!1 &925191939197635635
 GameObject:

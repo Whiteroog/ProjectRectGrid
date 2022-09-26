@@ -36,7 +36,7 @@ namespace GameGrid.Source.Utils
             {
                 TypeSelect.Default => defaultColor,
                 TypeSelect.Select => selectColor,
-                TypeSelect.PossibleWays => possibleWaysColor,
+                TypeSelect.PossibleWay => possibleWaysColor,
                 _ => defaultColor
             };
 
@@ -51,6 +51,6 @@ namespace GameGrid.Source.Utils
     {
         Default,
         Select,
-        PossibleWays
+        PossibleWay
     }
 }

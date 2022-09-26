@@ -71,14 +71,6 @@ PrefabInstance:
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}
-    - target: {fileID: 6634243046837346324, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
-      propertyPath: cost
-      value: 1
-      objectReference: {fileID: 0}
-    - target: {fileID: 6634243046837346324, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
-      propertyPath: tileType
-      value: 1
-      objectReference: {fileID: 0}
     - target: {fileID: 8927073942856085766, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_Color.b
       value: 1

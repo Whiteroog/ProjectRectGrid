@@ -2,43 +2,37 @@
 using System.Collections.Generic;
 using GameGrid.Source.Utils;
 using UnityEngine;
-using UnityEngine.Tilemaps;
 
 namespace GameGrid.Source.Managers
 {
     public class SelectManager : MonoBehaviour
     {
         private bool _isProcessing = false;
+        
+        private List<GroundTile> _tilesShowingPossibleWays = new();
 
-        private UnitTile _selectUnit;
-        private GroundTile _pastSelectTile;
-        private List<GroundTile> _showPossibleWays = new List<GroundTile>();
-
-        private GroundTilesManager _groundTilesManager;
-
-        private void Awake()
+        public void ShowPossibleWays(Vector3Int[] coordsForShow)
         {
-            _groundTilesManager = GetComponentInParent<GroundTilesManager>();
+            GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
+            foreach (Vector3Int coord in coordsForShow)
+            {
+                GroundTile showingTile = groundTilesManager.FindTile(coord);
+                showingTile.TileState.SelectType = TypeSelect.PossibleWay;
+                _tilesShowingPossibleWays.Add(showingTile);
+            }
         }
 
-        public void ShowPossibleWays(Vector3Int coordinate)
+        public void HidePossibleWays()
         {
-            GroundTile groundTile = _groundTilesManager.GetGroundTile(coordinate);
-            groundTile.TileState.SetBorderColor(TypeSelect.PossibleWays);
-            _showPossibleWays.Add(groundTile);
-        }
-
-        public void ClearPossibleWays()
-        {
-            if (_showPossibleWays.Count == 0)
+            if (_tilesShowingPossibleWays.Count == 0)
                 return;
 
-            foreach (GroundTile groundTile in _showPossibleWays)
+            foreach (GroundTile showingTile in _tilesShowingPossibleWays)
             {
-                groundTile.TileState.SetBorderColor(TypeSelect.Default);
+                showingTile.TileState.SetBorderColor(TypeSelect.Default);
             }
             
-            _showPossibleWays.Clear();
+            _tilesShowingPossibleWays.Clear();
         }
 
         // Event from CameraController
@@ -47,7 +41,7 @@ namespace GameGrid.Source.Managers
             if (_isProcessing)
                 return;
 
-            GroundTile selectTile = _groundTilesManager.GetGroundTile(_groundTilesManager.Tilemap.WorldToCell(clickPosition));
+            GroundTile selectTile = GroundTilesManager.Instance.FindTile(GroundTilesManager.Instance.Tilemap.WorldToCell(clickPosition));
 
             if (selectTile is null)
                 return;

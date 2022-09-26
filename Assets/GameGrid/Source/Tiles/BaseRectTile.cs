@@ -1,12 +1,10 @@
-using System;
-using GameGrid.Source.Managers;
 using UnityEngine;
 
 namespace GameGrid.Source.Tiles
 {
     public class BaseRectTile : MonoBehaviour
     {
-        [SerializeField] private TypeTile tileType = TypeTile.None;
+        [SerializeField] private TypeTile tileType = TypeTile.Ground;
 
         private Vector3Int _coordinate;
         public virtual Vector3Int Coordinate
@@ -20,7 +18,6 @@ namespace GameGrid.Source.Tiles
 
     public enum TypeTile
     {
-        None,
         Ground,
         Unit
     }
