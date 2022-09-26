@@ -7,15 +7,13 @@ namespace GameGrid.Source.Managers
 {
     public class GroundTilesManager : MonoBehaviour
     {
-        private Dictionary<Vector3Int, GroundTile> _groundTiles;
+        private Dictionary<Vector3Int, GroundTile> _groundTiles = new();
 
         public Tilemap Tilemap { private set; get; }
 
         private void Awake()
         {
             Tilemap = GetComponent<Tilemap>();
-
-            _groundTiles = new();
 
             foreach(GroundTile groundTile in GetComponentsInChildren<GroundTile>())
             {

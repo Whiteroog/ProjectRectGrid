@@ -12,8 +12,17 @@ namespace GameGrid.Source.Utils
         [SerializeField] private Color possibleWaysColor;
 
         private Image[] _borderLines;
-        
-        public TypeSelect SelectType { private set; get; }
+
+        private TypeSelect _selectType;
+        public TypeSelect SelectType
+        {
+            set
+            {
+                _selectType = value;
+                SetBorderColor(_selectType);
+            }
+            get => _selectType;
+        }
 
         private void Awake()
         {

@@ -12,14 +12,22 @@ namespace GameGrid.Source.Managers
     {
         public event Action<UnitsManager, bool> OnProcessing;
 
-        private Dictionary<Vector3Int, Vector3Int> _pathways;
+        private Dictionary<Vector3Int, Vector3Int> _pathways = new();
 
         private GroundTilesManager _groundTilesManager;
+
+        private UnitTile[] unitTiles;
 
         private void Awake()
         {
             _groundTilesManager = GetComponentInParent<GroundTilesManager>();
-            _pathways = new Dictionary<Vector3Int, Vector3Int>();
+
+            unitTiles = GetComponentsInChildren<UnitTile>();
+
+            foreach(UnitTile unit in unitTiles)
+            {
+                _groundTilesManager.GetGroundTile(unit.Coordinate).OccupiedTileByUnit = unit;
+            }
         }
 
         public void MoveUnit(UnitTile unit ,Vector3Int targetCoordinate)

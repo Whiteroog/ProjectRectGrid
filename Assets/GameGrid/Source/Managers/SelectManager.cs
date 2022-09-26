@@ -11,8 +11,7 @@ namespace GameGrid.Source.Managers
         private bool _isProcessing = false;
 
         private UnitTile _selectUnit;
-
-        private GroundTile _selectTile;
+        private GroundTile _pastSelectTile;
         private List<GroundTile> _showPossibleWays = new List<GroundTile>();
 
         private GroundTilesManager _groundTilesManager;
@@ -43,7 +42,7 @@ namespace GameGrid.Source.Managers
         }
 
         // Event from CameraController
-        public void SelectTile(Vector3 clickPosition)
+        public void DefineTile(Vector3 clickPosition)
         {
             if (_isProcessing)
                 return;
@@ -53,7 +52,7 @@ namespace GameGrid.Source.Managers
             if (selectTile is null)
                 return;
 
-
+            // TODO ddoing
         }
 
         private void SetProcessing(object sender, bool state)
