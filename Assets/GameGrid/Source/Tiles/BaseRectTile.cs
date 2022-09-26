@@ -4,11 +4,11 @@ using UnityEngine;
 
 namespace GameGrid.Source.Tiles
 {
-    public class BaseSquareTile : MonoBehaviour
+    public class BaseRectTile : MonoBehaviour
     {
         [SerializeField] private TileType tileType = TileType.None;
 
-        private BaseSquareTileManager _tileManager;
+        private BaseRectTileManager _tileManager;
 
         private Vector3Int _coordinate;
         public virtual Vector3Int Coordinate
@@ -17,7 +17,7 @@ namespace GameGrid.Source.Tiles
             get => _coordinate;
         }
 
-        public void SetupTile(BaseSquareTileManager newBaseSquareTileManager, Vector3Int newCoordinate)
+        public void SetupTile(BaseRectTileManager newBaseSquareTileManager, Vector3Int newCoordinate)
         {
             _tileManager = newBaseSquareTileManager;
             Coordinate = newCoordinate;

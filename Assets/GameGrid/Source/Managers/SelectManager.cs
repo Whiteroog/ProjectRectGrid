@@ -42,7 +42,7 @@ namespace GameGrid.Source.Managers
         }
 
         // Event from CameraController
-        public void SelectTile(BaseSquareTile selectedTile)
+        public void SelectTile(BaseRectTile selectedTile)
         {
             if (_isProcessing)
                 return;

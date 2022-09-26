@@ -6,32 +6,32 @@ using UnityEngine.Tilemaps;
 
 namespace GameGrid.Source.Managers
 {
-    public class BaseSquareTileManager : MonoBehaviour
+    public class BaseRectTileManager : MonoBehaviour
     {
         private Tilemap _tilemap;
         protected GridManager GridManager;
 
-        protected Dictionary<Vector3Int, BaseSquareTile> CachedTiles = new();
+        protected Dictionary<Vector3Int, BaseRectTile> CachedTiles = new();
 
         protected virtual void Awake()
         {
             _tilemap = GetComponent<Tilemap>();
             GridManager = GetComponentInParent<GridManager>();
 
-            foreach (BaseSquareTile tile in GetComponentsInChildren<BaseSquareTile>())
+            foreach (BaseRectTile tile in GetComponentsInChildren<BaseRectTile>())
             {
                 CachingTile(tile);
             }
         }
 
-        protected void CachingTile(BaseSquareTile tile)
+        protected void CachingTile(BaseRectTile tile)
         {
             Vector3Int coordinateTile = _tilemap.LocalToCell(tile.transform.localPosition);
             tile.SetupTile(this, coordinateTile);
             CachedTiles[coordinateTile] = tile;
         }
 
-        protected void SetTileCoordinate(BaseSquareTile tile, Vector3Int newCoordinate)
+        protected void SetTileCoordinate(BaseRectTile tile, Vector3Int newCoordinate)
         {
             CachedTiles.Remove(tile.Coordinate);
             tile.Coordinate = newCoordinate;
@@ -40,7 +40,7 @@ namespace GameGrid.Source.Managers
 
         public TTile GetTile<TTile>(Vector3Int coordinate) where TTile : class
         {
-            CachedTiles.TryGetValue(coordinate, out BaseSquareTile returnedTile);
+            CachedTiles.TryGetValue(coordinate, out BaseRectTile returnedTile);
             return returnedTile as TTile;
         }
     }

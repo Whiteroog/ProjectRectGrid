@@ -8,7 +8,7 @@ using UnityEngine;
 
 namespace GameGrid.Source.Managers
 {
-    public class UnitsManager : BaseSquareTileManager
+    public class UnitsManager : BaseRectTileManager
     {
         public event Action<UnitsManager, bool> OnProcessing;
 

@@ -7,7 +7,7 @@ using UnityEngine.UI;
 
 namespace GameGrid.Source.Tiles
 {
-    public class GroundTile : BaseSquareTile
+    public class GroundTile : BaseRectTile
     {
         [SerializeField] private Text coordinateText;
         [SerializeField] private Text costText;
@@ -15,7 +15,7 @@ namespace GameGrid.Source.Tiles
         [SerializeField] private int cost = 1;
         [SerializeField] private bool isObstacle = false;
 
-        private BaseSquareTile _occupiedTile;
+        private BaseRectTile _occupiedTile;
 
         private TileState _tileState;
         public TileState TileState => _tileState;
@@ -40,7 +40,7 @@ namespace GameGrid.Source.Tiles
         
         public int GetCost() => cost;
 
-        public void SetOccupiedTile(BaseSquareTile newTile) => _occupiedTile = newTile;
+        public void SetOccupiedTile(BaseRectTile newTile) => _occupiedTile = newTile;
         public TTile GetOccupiedTile<TTile>() where TTile : class => _occupiedTile as TTile;
     }
 }

@@ -5,7 +5,7 @@ using UnityEngine.Tilemaps;
 
 namespace GameGrid.Source.Managers
 {
-    public class GroundTilesManager : BaseSquareTileManager
+    public class GroundTilesManager : BaseRectTileManager
     {
         protected override void Awake()
         {

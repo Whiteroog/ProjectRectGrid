@@ -6,13 +6,13 @@ namespace GameGrid.Source.Managers
 {
     public class GridManager : MonoBehaviour
     {
-        private List<BaseSquareTileManager> TileManagers = new();
+        private List<BaseRectTileManager> TileManagers = new();
         private void Awake()
         {
-            TileManagers.AddRange(GetComponentsInChildren<BaseSquareTileManager>());
+            TileManagers.AddRange(GetComponentsInChildren<BaseRectTileManager>());
         }
 
-        public List<BaseSquareTileManager> GetTileManagers() => TileManagers;
+        public List<BaseRectTileManager> GetTileManagers() => TileManagers;
         public TManager GetTileManager<TManager>() where TManager : class => TileManagers.Find(manager => manager is TManager) as TManager;
     }
 }

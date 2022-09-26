@@ -8,7 +8,7 @@ using UnityEngine.Serialization;
 
 namespace GameGrid.Source.Tiles
 {
-    public class UnitTile : BaseSquareTile
+    public class UnitTile : BaseRectTile
     {
         [SerializeField] private int movementPoints = 5;
         [SerializeField] private float movementSpeed = 2.0f;
