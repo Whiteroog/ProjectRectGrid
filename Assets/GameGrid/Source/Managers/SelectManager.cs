@@ -51,8 +51,10 @@ namespace GameGrid.Source.Managers
             if (_isProcessing)
                 return;
 
+            // offset tile
             clickPosition.x += 0.5f;
             clickPosition.y += 0.5f;
+            
             clickPosition.z = GroundTilesManager.Instance.transform.position.z;
             Vector3Int clickCoord = GroundTilesManager.Instance.Tilemap.WorldToCell(clickPosition);
             GroundTile selectTile = GroundTilesManager.Instance.FindTile(clickCoord);
@@ -79,8 +81,11 @@ namespace GameGrid.Source.Managers
                         }
                         else
                         {
-                            _selectedUnit = null;
-                            HidePossibleWays();
+                            if(_selectedUnit is not null)
+                            {
+                                _selectedUnit = null;
+                                HidePossibleWays();
+                            }
                         }
 
                         break;
