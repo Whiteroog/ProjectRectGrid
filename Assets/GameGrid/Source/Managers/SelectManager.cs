@@ -51,6 +51,8 @@ namespace GameGrid.Source.Managers
             if (_isProcessing)
                 return;
 
+            clickPosition.x += 0.5f;
+            clickPosition.y += 0.5f;
             clickPosition.z = GroundTilesManager.Instance.transform.position.z;
             Vector3Int clickCoord = GroundTilesManager.Instance.Tilemap.WorldToCell(clickPosition);
             GroundTile selectTile = GroundTilesManager.Instance.FindTile(clickCoord);
