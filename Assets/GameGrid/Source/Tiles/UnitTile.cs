@@ -39,14 +39,14 @@ namespace GameGrid.Source.Tiles
 
             for (int i = 1; i < pathway.Length; i++)
             {
-                Vector3Int start = pathway[i - 1];
-                Vector3Int end = pathway[i];
+                Vector3 start = pathway[i - 1];
+                Vector3 end = pathway[i];
 
                 DirectionRenderSprite(start, end);
 
                 for (float t = 0; t < 1; t += Time.deltaTime * movementSpeed)
                 {
-                    transform.position = Vector3.Lerp(start, end, t);
+                    transform.localPosition = Vector3.Lerp(start, end, t);
                     yield return null;
                 }
             }
@@ -57,11 +57,9 @@ namespace GameGrid.Source.Tiles
             
             onEndMove?.Invoke();
 
-            void DirectionRenderSprite(Vector3Int start, Vector3Int end)
-            {
-                Vector3 dir = end - start;
-                
-                float side = Vector3.Dot(dir.normalized, Vector3.right);
+            void DirectionRenderSprite(Vector3 start, Vector3 end)
+            {              
+                float side = Vector3.Dot((end - start).normalized, Vector3.right);
                 
                 if (!Mathf.Approximately(side, 0.0f))
                     _spriteRenderer.flipX = side < 0.0f;

@@ -39,7 +39,7 @@ namespace GameGrid.Source.Managers
 
             foreach (Vector3Int dir in _rectDirections)
             {
-                GroundTile ground = _groundTiles[centerCoord + dir];
+                _groundTiles.TryGetValue(centerCoord + dir, out GroundTile ground);
                 
                 if(ground is null)
                     continue;

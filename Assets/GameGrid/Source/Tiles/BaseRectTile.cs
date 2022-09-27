@@ -9,7 +9,7 @@ namespace GameGrid.Source.Tiles
         private Vector3Int _coordinate;
         public virtual Vector3Int Coordinate
         {
-            set => transform.position = _coordinate = value;
+            set => transform.localPosition = _coordinate = value;
             get => _coordinate;
         }
 

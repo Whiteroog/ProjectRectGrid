@@ -2,36 +2,42 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameGrid.Source.Tiles;
-using GameGrid.Source.Utils;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace GameGrid.Source.Managers
 {
     public class UnitsManager : MonoBehaviour
     {
-        public event Action<UnitsManager, bool> OnProcessing;
+        public static UnitsManager Instance;
 
         private Dictionary<Vector3Int, Vector3Int> _pathways = new();
 
         private UnitTile[] unitTiles;
 
+        public Tilemap Tilemap { private set; get; }
+
         private void Awake()
         {
+            Instance = this;
+
+            Tilemap = GetComponent<Tilemap>();
+
             unitTiles = GetComponentsInChildren<UnitTile>();
 
             GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
 
             foreach(UnitTile unit in unitTiles)
             {
-                unit.Coordinate = groundTilesManager.Tilemap.LocalToCell(unit.transform.localPosition);
+                unit.Coordinate = Tilemap.LocalToCell(unit.transform.localPosition);
                 groundTilesManager.FindTile(unit.Coordinate).OccupiedUnit = unit;
             }
         }
 
-        public void MoveUnit(UnitTile unit ,Vector3Int targetCoord)
+        public void MoveUnit(UnitTile unit ,Vector3Int targetCoord, Action<bool> onProcessing)
         {
-            OnProcessing?.Invoke(this, true);
-            StartCoroutine(unit.Move(GeneratePathway(targetCoord), () => OnProcessing?.Invoke(this, false)));
+            onProcessing.Invoke(true);
+            StartCoroutine(unit.Move(GeneratePathway(targetCoord), () => onProcessing.Invoke(false)));
         }
 
         private Vector3Int[] GeneratePathway(Vector3Int targetCoord)
@@ -48,10 +54,10 @@ namespace GameGrid.Source.Managers
             return pathway.ToArray();
         }
 
-        public void GeneratePossibleWays(SelectManager selectManager, Vector3Int targetCoord, int movementPoints)
+        public void GeneratePossibleWays(Vector3Int targetCoord, int movementPoints)
         {
             _pathways = BreadthFirstSearch(targetCoord, movementPoints);
-            selectManager.ShowPossibleWays(_pathways.Keys.ToArray()[1..]);
+            SelectManager.Instance.ShowPossibleWays(_pathways.Keys.ToArray()[1..]);
         }
 
         private Dictionary<Vector3Int, Vector3Int> BreadthFirstSearch(Vector3Int startCoord, int movementPoints)

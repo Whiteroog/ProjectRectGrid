@@ -7,13 +7,19 @@ namespace GameGrid.Source.Managers
 {
     public class SelectManager : MonoBehaviour
     {
+        public static SelectManager Instance;
+
         private bool _isProcessing = false;
         
         private List<GroundTile> _tilesShowingPossibleWays = new();
 
-        private TypeState _stateType = TypeState.None;
-
         private GroundTile _selectedTile;
+        private UnitTile _selectedUnit;
+
+        private void Awake()
+        {
+            Instance = this;
+        }
 
         public void ShowPossibleWays(Vector3Int[] coordsForShow)
         {
@@ -52,29 +58,50 @@ namespace GameGrid.Source.Managers
             if (selectTile is null)
                 return;
 
-            if (_selectedTile is not null)
-                _selectedTile.TileState.SelectType = TypeSelect.Default;
+            if(_selectedTile is not null)
+            {
+                if(_selectedTile.Coordinate != selectTile.Coordinate)
+                    _selectedTile.TileState.SelectType = TypeSelect.Default;
+            }
 
-            selectTile.TileState.SelectType = TypeSelect.Select;
+            switch(selectTile.TileState.SelectType)
+            {
+                case TypeSelect.Default:
+                    {
+                        selectTile.TileState.SelectType = TypeSelect.Select;
+
+                        if(selectTile.IsHaveUnit())
+                        {
+                            _selectedUnit = selectTile.OccupiedUnit;
+                            UnitsManager.Instance.GeneratePossibleWays(_selectedUnit.Coordinate, _selectedUnit.GetMovementPoints());
+                        }
+                        else
+                        {
+                            _selectedUnit = null;
+                            HidePossibleWays();
+                        }
+
+                        break;
+                    }
+                case TypeSelect.Select:
+                    {
+                        selectTile.TileState.SelectType = TypeSelect.Default;
+                        break;
+                    }
+                case TypeSelect.PossibleWay:
+                    {
+                        if (_selectedUnit is not null)
+                        {
+                            UnitsManager.Instance.MoveUnit(_selectedUnit, selectTile.Coordinate, (state) => _isProcessing = state);
+
+                            _selectedUnit = null;
+                            HidePossibleWays();
+                        }
+                        break;
+                    }
+            }
 
             _selectedTile = selectTile;
-        }
-
-        private void SetProcessing(object sender, bool state)
-        {
-            _isProcessing = state;
-
-            if (!state)
-            {
-                ((UnitsManager)sender).OnProcessing -= SetProcessing;
-            }
-        }
-
-        enum TypeState
-        {
-            None,
-            SelectGround,
-            SelectUnit
         }
     }
 }
