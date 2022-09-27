@@ -1,118 +1,106 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using GameGrid.Source.Tiles;
-using GameGrid.Source.Utils;
 using UnityEngine;
+using UnityEngine.Tilemaps;
 
 namespace GameGrid.Source.Managers
 {
     public class UnitsManager : MonoBehaviour
     {
-        public event Action<UnitsManager, bool> OnProcessing;
+        public static UnitsManager Instance;
 
         private Dictionary<Vector3Int, Vector3Int> _pathways = new();
 
-        private GroundTilesManager _groundTilesManager;
-
-        private UnitTile[] unitTiles;
+        private UnitTile[] _unitTiles;
 
         private void Awake()
         {
-            _groundTilesManager = GetComponentInParent<GroundTilesManager>();
+            Instance = this;
 
-            unitTiles = GetComponentsInChildren<UnitTile>();
+            _unitTiles = GetComponentsInChildren<UnitTile>();
 
-            foreach(UnitTile unit in unitTiles)
+            GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
+
+            foreach(UnitTile unit in _unitTiles)
             {
-                _groundTilesManager.GetGroundTile(unit.Coordinate).OccupiedTileByUnit = unit;
+                unit.Coordinate = groundTilesManager.Tilemap.LocalToCell(unit.transform.localPosition);
+                groundTilesManager.FindTile(unit.Coordinate).OccupiedUnit = unit;
             }
         }
 
-        public void MoveUnit(UnitTile unit ,Vector3Int targetCoordinate)
+        public void MoveUnit(UnitTile unit ,Vector3Int targetCoord, Action<bool> onProcessing)
         {
-            OnProcessing?.Invoke(this, true);
-            StartCoroutine(unit.Move(GeneratePathway(targetCoordinate), EndMoveUnit));
+            onProcessing.Invoke(true);
+            StartCoroutine(unit.Move(GeneratePathway(targetCoord), () => onProcessing.Invoke(false)));
         }
 
-        private void EndMoveUnit(UnitTile unit, Vector3Int targetCoordiante)
-        {
-            _groundTilesManager.GetGroundTile(unit.Coordinate).OccupiedTileByUnit = null;
-            unit.Coordinate = targetCoordiante;
-            _groundTilesManager.GetGroundTile(targetCoordiante).OccupiedTileByUnit = unit;
-
-            OnProcessing?.Invoke(this, false);
-        }
-
-        private Vector3Int[] GeneratePathway(Vector3Int pointCoordinate)
+        private Vector3Int[] GeneratePathway(Vector3Int targetCoord)
         {
             Stack<Vector3Int> pathway = new Stack<Vector3Int>();
+            pathway.Push(targetCoord);
 
-            while (pointCoordinate != _pathways[pointCoordinate])
+            //        current way -> past way
+            while (pathway.Peek() != _pathways[pathway.Peek()])
             {
-                pathway.Push(pointCoordinate);
-                pointCoordinate = _pathways[pointCoordinate];
-
+                pathway.Push(_pathways[pathway.Peek()]);
             }
 
             return pathway.ToArray();
         }
 
-        public void GeneratePossibleWays(SelectManager selectManager, Vector3Int sourceCoordinate, int movementPoints)
+        public void GeneratePossibleWays(Vector3Int targetCoord, int movementPoints)
         {
-            _pathways = BreadthFirstSearch(sourceCoordinate, movementPoints);
-            
-            Vector3Int[] possibleCoordinates = _pathways.Keys.ToArray();
-
-            for (int i = 1; i < possibleCoordinates.Length; i++)
-            {
-                selectManager.ShowPossibleWays(possibleCoordinates[i]);
-            }
+            _pathways = BreadthFirstSearch(targetCoord, movementPoints);
+            SelectManager.Instance.ShowPossibleWays(_pathways.Keys.ToArray()[1..]);
         }
 
-        private Dictionary<Vector3Int, Vector3Int> BreadthFirstSearch(Vector3Int startCoordinate, int movementPoints)
+        private Dictionary<Vector3Int, Vector3Int> BreadthFirstSearch(Vector3Int startCoord, int movementPoints)
         {
-            Dictionary<Vector3Int, Vector3Int> visitedCoordinate = new Dictionary<Vector3Int, Vector3Int>();
+            Dictionary<Vector3Int, Vector3Int> visitedCoords = new Dictionary<Vector3Int, Vector3Int>();
             Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
-            Queue<Vector3Int> coordinateToVisit = new Queue<Vector3Int>();
+            Queue<Vector3Int> coordsToVisit = new Queue<Vector3Int>();
             
-            coordinateToVisit.Enqueue(startCoordinate);
-            costSoFar[startCoordinate] = 0;
-            visitedCoordinate[startCoordinate] = startCoordinate;
+            coordsToVisit.Enqueue(startCoord);
+            costSoFar[startCoord] = 0;
+            visitedCoords[startCoord] = startCoord;
 
-            while (coordinateToVisit.Count > 0)
+            while (coordsToVisit.Count > 0)
             {
-                Vector3Int currentCoordinate = coordinateToVisit.Dequeue();
-                foreach (GroundTile neighbourTile in _groundTilesManager.GetNeighboursFor(currentCoordinate))
+                Vector3Int currentCoord = coordsToVisit.Dequeue();
+                foreach (GroundTile neighbourTile in GroundTilesManager.Instance.GetNeighboursFor(currentCoord))
                 {
+                    if (neighbourTile is null)
+                        continue;
+
                     if(neighbourTile.IsObstacle())
                         continue;
 
                     int nodeCost = neighbourTile.GetCost();
-                    int currentCost = costSoFar[currentCoordinate];
+                    int currentCost = costSoFar[currentCoord];
                     int newCost = currentCost + nodeCost;
 
-                    Vector3Int neighbourCoordinate = neighbourTile.Coordinate;
+                    Vector3Int neighbourCoord = neighbourTile.Coordinate;
 
                     if (newCost <= movementPoints)
                     {
-                        if (!visitedCoordinate.ContainsKey(neighbourCoordinate))
+                        if (!visitedCoords.ContainsKey(neighbourCoord))
                         {
-                            visitedCoordinate[neighbourCoordinate] = currentCoordinate;
-                            costSoFar[neighbourCoordinate] = newCost;
-                            coordinateToVisit.Enqueue(neighbourCoordinate);
+                            visitedCoords[neighbourCoord] = currentCoord;
+                            costSoFar[neighbourCoord] = newCost;
+                            coordsToVisit.Enqueue(neighbourCoord);
                         }
-                        else if (costSoFar[neighbourCoordinate] > newCost)
+                        else if (costSoFar[neighbourCoord] > newCost)
                         {
-                            costSoFar[neighbourCoordinate] = newCost;
-                            visitedCoordinate[neighbourCoordinate] = currentCoordinate;
+                            costSoFar[neighbourCoord] = newCost;
+                            visitedCoords[neighbourCoord] = currentCoord;
                         }
                     }
                 }
             }
 
-            return visitedCoordinate;
+            return visitedCoords;
         }
     }
 }

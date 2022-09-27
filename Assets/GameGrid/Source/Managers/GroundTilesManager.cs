@@ -7,45 +7,50 @@ namespace GameGrid.Source.Managers
 {
     public class GroundTilesManager : MonoBehaviour
     {
+        public static GroundTilesManager Instance;
+
         private Dictionary<Vector3Int, GroundTile> _groundTiles = new();
 
         public Tilemap Tilemap { private set; get; }
 
         private void Awake()
         {
+            Instance = this;
+
             Tilemap = GetComponent<Tilemap>();
 
-            foreach(GroundTile groundTile in GetComponentsInChildren<GroundTile>())
+            foreach (GroundTile ground in GetComponentsInChildren<GroundTile>())
             {
-                _groundTiles[groundTile.Coordinate] = groundTile;
+                ground.Coordinate = Tilemap.LocalToCell(ground.transform.localPosition);
+                _groundTiles[ground.Coordinate] = ground;
             }
         }
 
-        public GroundTile GetGroundTile(Vector3Int coordiante)
+        public GroundTile FindTile(Vector3Int coord)
         {
-            _groundTiles.TryGetValue(coordiante, out GroundTile groundTile);
-            return groundTile;
+            _groundTiles.TryGetValue(coord, out GroundTile ground);
+            return ground;
         }
 
-        public GroundTile[] GetNeighboursFor(Vector3Int centerCoordiante)
+        public GroundTile[] GetNeighboursFor(Vector3Int centerCoord)
         {
-            GroundTile[] neighboursTiles = new GroundTile[4];
+            GroundTile[] neighbours = new GroundTile[4];
             int i = 0;
 
-            foreach (Vector3Int direction in _directionsSquareTile)
+            foreach (Vector3Int dir in _rectDirections)
             {
-                GroundTile groundTile = _groundTiles[centerCoordiante + direction];
+                _groundTiles.TryGetValue(centerCoord + dir, out GroundTile ground);
                 
-                if(groundTile is null)
+                if(ground is null)
                     continue;
                 
-                neighboursTiles[i++] = groundTile;
+                neighbours[i++] = ground;
             }
 
-            return neighboursTiles;
+            return neighbours;
         }
 
-        private Vector3Int[] _directionsSquareTile = 
+        private Vector3Int[] _rectDirections = 
         {
                             new Vector3Int(0, 1, 0),
             new Vector3Int(-1, 0, 0),     new Vector3Int(1, 0, 0),

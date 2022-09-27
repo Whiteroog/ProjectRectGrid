@@ -1,6 +1,6 @@
 %YAML 1.1
 %TAG !u! tag:unity3d.com,2011:
---- !u!1001 &1724155118528835647
+--- !u!1001 &64537499320464183
 PrefabInstance:
   m_ObjectHideFlags: 0
   serializedVersion: 2
@@ -8,12 +8,20 @@ PrefabInstance:
     m_TransformParent: {fileID: 0}
     m_Modifications:
     - target: {fileID: -229363741495947192, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
-      propertyPath: m_Sprite
-      value: 
-      objectReference: {fileID: 1454747451, guid: 824e4c529f7745143922925bb2fbdf55, type: 3}
+      propertyPath: m_Color.b
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -229363741495947192, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.g
+      value: 0.5
+      objectReference: {fileID: 0}
+    - target: {fileID: -229363741495947192, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.r
+      value: 0.5
+      objectReference: {fileID: 0}
     - target: {fileID: 151320813615067628, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_Name
-      value: Road
+      value: Mountain
       objectReference: {fileID: 0}
     - target: {fileID: 5199898462806408469, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_RootOrder
@@ -69,6 +77,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6283820950485354196, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 6634243046837346324, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: isObstacle
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 8927073942856085766, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
