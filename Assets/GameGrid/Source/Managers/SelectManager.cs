@@ -11,6 +11,10 @@ namespace GameGrid.Source.Managers
         
         private List<GroundTile> _tilesShowingPossibleWays = new();
 
+        private TypeState _stateType = TypeState.None;
+
+        private GroundTile _selectedTile;
+
         public void ShowPossibleWays(Vector3Int[] coordsForShow)
         {
             GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
@@ -29,24 +33,31 @@ namespace GameGrid.Source.Managers
 
             foreach (GroundTile showingTile in _tilesShowingPossibleWays)
             {
-                showingTile.TileState.SetBorderColor(TypeSelect.Default);
+                showingTile.TileState.SelectType = TypeSelect.Default;
             }
             
             _tilesShowingPossibleWays.Clear();
         }
 
         // Event from CameraController
-        public void DefineTile(Vector3 clickPosition)
+        public void SelectTile(Vector3 clickPosition)
         {
             if (_isProcessing)
                 return;
 
-            GroundTile selectTile = GroundTilesManager.Instance.FindTile(GroundTilesManager.Instance.Tilemap.WorldToCell(clickPosition));
+            clickPosition.z = GroundTilesManager.Instance.transform.position.z;
+            Vector3Int clickCoord = GroundTilesManager.Instance.Tilemap.WorldToCell(clickPosition);
+            GroundTile selectTile = GroundTilesManager.Instance.FindTile(clickCoord);
 
             if (selectTile is null)
                 return;
 
-            // TODO ddoing
+            if (_selectedTile is not null)
+                _selectedTile.TileState.SelectType = TypeSelect.Default;
+
+            selectTile.TileState.SelectType = TypeSelect.Select;
+
+            _selectedTile = selectTile;
         }
 
         private void SetProcessing(object sender, bool state)
@@ -57,6 +68,13 @@ namespace GameGrid.Source.Managers
             {
                 ((UnitsManager)sender).OnProcessing -= SetProcessing;
             }
+        }
+
+        enum TypeState
+        {
+            None,
+            SelectGround,
+            SelectUnit
         }
     }
 }

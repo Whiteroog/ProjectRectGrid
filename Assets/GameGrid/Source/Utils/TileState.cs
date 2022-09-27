@@ -19,7 +19,19 @@ namespace GameGrid.Source.Utils
             set
             {
                 _selectType = value;
-                SetBorderColor(_selectType);
+
+                Color setNewColor = value switch
+                {
+                    TypeSelect.Default => defaultColor,
+                    TypeSelect.Select => selectColor,
+                    TypeSelect.PossibleWay => possibleWaysColor,
+                    _ => defaultColor
+                };
+
+                foreach (Image borderLine in _borderLines)
+                {
+                    borderLine.color = setNewColor;
+                }
             }
             get => _selectType;
         }
@@ -27,23 +39,6 @@ namespace GameGrid.Source.Utils
         private void Awake()
         {
             _borderLines = GetComponentsInChildren<Image>();
-        }
-
-        public void SetBorderColor(TypeSelect selectType)
-        {
-            SelectType = selectType;
-            Color setNewColor = selectType switch
-            {
-                TypeSelect.Default => defaultColor,
-                TypeSelect.Select => selectColor,
-                TypeSelect.PossibleWay => possibleWaysColor,
-                _ => defaultColor
-            };
-
-            foreach (Image borderLine in _borderLines)
-            {
-                borderLine.color = setNewColor;
-            }
         }
     }
 
