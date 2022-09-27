@@ -13,23 +13,19 @@ namespace GameGrid.Source.Managers
 
         private Dictionary<Vector3Int, Vector3Int> _pathways = new();
 
-        private UnitTile[] unitTiles;
-
-        public Tilemap Tilemap { private set; get; }
+        private UnitTile[] _unitTiles;
 
         private void Awake()
         {
             Instance = this;
 
-            Tilemap = GetComponent<Tilemap>();
-
-            unitTiles = GetComponentsInChildren<UnitTile>();
+            _unitTiles = GetComponentsInChildren<UnitTile>();
 
             GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
 
-            foreach(UnitTile unit in unitTiles)
+            foreach(UnitTile unit in _unitTiles)
             {
-                unit.Coordinate = Tilemap.LocalToCell(unit.transform.localPosition);
+                unit.Coordinate = groundTilesManager.Tilemap.LocalToCell(unit.transform.localPosition);
                 groundTilesManager.FindTile(unit.Coordinate).OccupiedUnit = unit;
             }
         }

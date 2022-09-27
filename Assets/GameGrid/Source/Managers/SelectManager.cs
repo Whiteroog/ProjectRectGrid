@@ -70,7 +70,7 @@ namespace GameGrid.Source.Managers
                     {
                         selectTile.TileState.SelectType = TypeSelect.Select;
 
-                        if(selectTile.IsHaveUnit())
+                        if(selectTile.OccupiedUnit is not null)
                         {
                             _selectedUnit = selectTile.OccupiedUnit;
                             UnitsManager.Instance.GeneratePossibleWays(_selectedUnit.Coordinate, _selectedUnit.GetMovementPoints());

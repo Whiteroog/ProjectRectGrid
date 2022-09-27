@@ -35,6 +35,5 @@ namespace GameGrid.Source.Tiles
 
         public bool IsObstacle() => isObstacle;
         public int GetCost() => cost;
-        public bool IsHaveUnit() => OccupiedUnit is not null;
     }
 }
