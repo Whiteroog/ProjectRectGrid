@@ -5852,7 +5852,7 @@ MonoBehaviour:
       m_Calls:
       - m_Target: {fileID: 1960763020}
         m_TargetAssemblyTypeName: GameGrid.Source.Managers.SelectManager, Assembly-CSharp
-        m_MethodName: SelectTile
+        m_MethodName: OnSelect
         m_Mode: 0
         m_Arguments:
           m_ObjectArgument: {fileID: 0}

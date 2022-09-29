@@ -32,8 +32,13 @@ namespace GameGrid.Source.Managers
 
         public void MoveUnit(UnitTile unit ,Vector3Int targetCoord, Action<bool> onProcessing)
         {
+            Vector3Int[] pathway = GeneratePathway(targetCoord);
+
+            if (pathway.Length == 1)
+                return;
+
             onProcessing.Invoke(true);
-            StartCoroutine(unit.Move(GeneratePathway(targetCoord), () => onProcessing.Invoke(false)));
+            StartCoroutine(unit.Move(pathway, () => onProcessing.Invoke(false)));
         }
 
         private Vector3Int[] GeneratePathway(Vector3Int targetCoord)
