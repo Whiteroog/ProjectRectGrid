@@ -65,17 +65,25 @@ namespace GameGrid.Source.Managers
             {
                 case SelectState.NotSelect:
                     {
+                        // select clicked tile
                         selectTile.TileState.SelectType = TypeSelect.Select;
                         _selectTile = selectTile;
 
+                        // state if clicked on unit
                         if (selectTile.OccupiedUnit is not null)
                         {
+                            // save unit for using
                             _unitTile = selectTile.OccupiedUnit;
+                            
+                            // and just highlight possible tile
                             UnitsManager.Instance.GeneratePossibleWays(_unitTile.Coordinate, _unitTile.GetMovementPoints());
+                            
+                            // if clicked on tile with unit then we have state movement unit
                             _stateSelect = SelectState.ChoicePossiblePathway;
                         }
                         else
                         {
+                            // state changing
                             _stateSelect = SelectState.Select;
                         }
 
@@ -83,63 +91,106 @@ namespace GameGrid.Source.Managers
                     }
                 case SelectState.Select:
                     {
+                        // when switching tile, past tile turn off, (1)
                         _selectTile.TileState.SelectType = TypeSelect.Default;
 
+                        //************** single case ******************
+                        
+                        // single case when clicking on same tile
                         if (_selectTile.Coordinate == selectTile.Coordinate)
                         {
+                            // cache clear
                             _selectTile = null;
 
+                            // state reset
                             _stateSelect = SelectState.NotSelect;
                             break;
                         }
+                        
+                        //************** single case ******************
 
+                        // (1) selecting tile turn on
                         selectTile.TileState.SelectType = TypeSelect.Select;
+                        
+                        // and caching
                         _selectTile = selectTile;
 
+                        // state if clicked on unit
                         if (selectTile.OccupiedUnit is not null)
                         {
+                            // save unit for using
                             _unitTile = selectTile.OccupiedUnit;
+                            
+                            // and just highlight possible tile
                             UnitsManager.Instance.GeneratePossibleWays(_unitTile.Coordinate, _unitTile.GetMovementPoints());
+                            
+                            // if clicked on tile with unit then we have state movement unit
                             _stateSelect = SelectState.ChoicePossiblePathway;
                         }
+                        
+                        // state no changing
+
+                        /*
                         else
                         {
                             _stateSelect = SelectState.Select;
                         }
+                        */
 
                         break;
                     }
                 case SelectState.ChoicePossiblePathway:
                     {
+                        // turn off past tile highlight
                         _selectTile.TileState.SelectType = TypeSelect.Default;
 
+                        //************** single case ******************
+                        
+                        // single case when clicking on same tile
                         if (_unitTile.Coordinate == selectTile.Coordinate)
                         {
+                            // turn off all highlight
                             HidePossibleWays();
+                            
+                            // clear all cached data
                             _selectTile = null;
                             _unitTile = null;
 
+                            // reset state
                             _stateSelect = SelectState.NotSelect;
                             break;
                         }
+                        
+                        //************** single case ******************
 
+                        // cached next selected tile
                         _selectTile = selectTile;
 
+                        // if selected not highlight tile
                         if (selectTile.TileState.SelectType != TypeSelect.PossibleWay)
                         {
+                            // turn off all highlight
                             HidePossibleWays();
+                            
+                            // clear unit cache
                             _unitTile = null;
+                            
+                            // but highlighting select tile
                             selectTile.TileState.SelectType = TypeSelect.Select;
 
+                            // change state
                             _stateSelect = SelectState.Select;
                             break;
                         }
+                        
+                        // if clicked on highlight tile (possible way)
 
                         UnitsManager.Instance.MoveUnit(_unitTile, selectTile.Coordinate, (state) => _isProcessing = state);
 
                         HidePossibleWays();
                         _unitTile = null;
 
+                        // reset state
                         _stateSelect = SelectState.NotSelect;
                         break;
                     }

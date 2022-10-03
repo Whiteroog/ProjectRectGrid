@@ -46,8 +46,8 @@ namespace GameGrid.Source.Controllers
 
         private void CameraMovementByKeyboard()
         {
-            float horizontalMove = Input.GetAxis("Camera Horizontal");
-            float verticalMove = Input.GetAxis("Camera Vertical");
+            float horizontalMove = Input.GetAxis("Horizontal Camera");
+            float verticalMove = Input.GetAxis("Vertical Camera");
 
             Vector3 deltaMovement = new Vector3(horizontalMove, verticalMove, 0.0f) * (movementSpeed * Time.deltaTime);
 
@@ -56,7 +56,7 @@ namespace GameGrid.Source.Controllers
 
         private void CameraScrolling()
         {
-            float scroll = Input.GetAxis("Mouse ScrollWheel");
+            float scroll = Input.GetAxis("ScrollWheel Camera");
             float deltaScroll = scroll * scrollSpeed * Time.deltaTime;
 
             float orthographicSize = _playerCamera.orthographicSize;
