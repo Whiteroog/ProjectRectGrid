@@ -5844,9 +5844,13 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   movementSpeed: 5
-  scrollSpeed: 50
-  scrollSizeMin: 2
-  scrollSizeMax: 4
+  scrollWheelSpeed: 50
+  scrollKeysSpeed: 5
+  edgeScrollSpeed: 7
+  dragPanSpeed: 2
+  scrollSizeMin: 3
+  scrollSizeMax: 8
+  edgeScrollSize: 200
   onClickTile:
     m_PersistentCalls:
       m_Calls:
