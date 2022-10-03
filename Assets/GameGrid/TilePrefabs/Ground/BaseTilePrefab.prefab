@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: -229363741495947192}
   - component: {fileID: 3401939114373500696}
   - component: {fileID: 6634243046837346324}
-  m_Layer: 0
+  m_Layer: 3
   m_Name: BaseTilePrefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -125,7 +125,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d455d694ebb84bedb6af4758b795a563, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  tileType: 0
   coordText: {fileID: 6283820950485354196}
   costText: {fileID: 8927073942856085766}
   cost: 1

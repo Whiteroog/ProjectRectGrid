@@ -9,6 +9,8 @@ namespace GameGrid.Source.Managers
     {
         public static SelectManager Instance;
 
+        [SerializeField] private LayerMask selectMask;
+
         private bool _isProcessing = false;
         
         private List<GroundTile> _tilesShowingPossibleWays = new();
@@ -16,69 +18,7 @@ namespace GameGrid.Source.Managers
         private SelectState _stateSelect = SelectState.NotSelect;
 
         private GroundTile _selectTile;
-        private GroundTile SelectTile
-        {
-            set
-            {
-                if(value is null)
-                {
-                    _selectTile.TileState.SelectType = TypeSelect.Default;
-                    _selectTile = null;
-                    _stateSelect = SelectState.NotSelect;
-                    return;
-                }
-
-                if(_selectTile is null)
-                {
-                    value.TileState.SelectType = TypeSelect.Select;
-
-                    _selectTile = value;
-                    _stateSelect = SelectState.Select;
-                    return;
-                }
-
-                // единичный случай
-                if(_selectTile.Coordinate == value.Coordinate)
-                {
-                    _selectTile.TileState.SelectType = TypeSelect.Default;
-                    _selectTile = null;
-                    _stateSelect = SelectState.NotSelect;
-                    return;
-                }
-
-                _selectTile.TileState.SelectType = TypeSelect.Default;
-                value.TileState.SelectType = TypeSelect.Select;
-
-                _selectTile = value;
-                _stateSelect = SelectState.Select;
-            }
-            get => _selectTile;
-        }
-
         private UnitTile _unitTile;
-        private UnitTile UnitTile
-        {
-            set
-            {
-                if(value is null)
-                {
-                    _unitTile = null;
-
-                    if(SelectTile is not null)
-                        SelectTile = null;
-
-                    HidePossibleWays();
-                    _stateSelect = SelectState.NotSelect;
-
-                    return;
-                }
-
-                UnitsManager.Instance.GeneratePossibleWays(value.Coordinate, value.GetMovementPoints());
-                _unitTile = value;
-                _stateSelect = SelectState.ChoicePossiblePathway;
-            }
-            get => _unitTile;
-        }
 
         private void Awake()
         {
@@ -115,13 +55,8 @@ namespace GameGrid.Source.Managers
             if (_isProcessing)
                 return;
 
-            // offset tile
-            clickPosition.x += 0.5f;
-            clickPosition.y += 0.5f;
-            
-            clickPosition.z = GroundTilesManager.Instance.transform.position.z;
-            Vector3Int clickCoord = GroundTilesManager.Instance.Tilemap.WorldToCell(clickPosition);
-            GroundTile selectTile = GroundTilesManager.Instance.FindTile(clickCoord);
+            GroundTile selectTile = Physics2D.Raycast(clickPosition, Vector2.zero, Mathf.Infinity, selectMask)
+                .collider?.gameObject.GetComponent<GroundTile>();
 
             if (selectTile is null)
                 return;
@@ -130,24 +65,82 @@ namespace GameGrid.Source.Managers
             {
                 case SelectState.NotSelect:
                     {
-                        SelectTile = selectTile;
-                        if(selectTile.OccupiedUnit is not null)
-                            UnitTile = selectTile.OccupiedUnit;
+                        selectTile.TileState.SelectType = TypeSelect.Select;
+                        _selectTile = selectTile;
+
+                        if (selectTile.OccupiedUnit is not null)
+                        {
+                            _unitTile = selectTile.OccupiedUnit;
+                            UnitsManager.Instance.GeneratePossibleWays(_unitTile.Coordinate, _unitTile.GetMovementPoints());
+                            _stateSelect = SelectState.ChoicePossiblePathway;
+                        }
+                        else
+                        {
+                            _stateSelect = SelectState.Select;
+                        }
 
                         break;
                     }
                 case SelectState.Select:
                     {
-                        SelectTile = selectTile;
+                        _selectTile.TileState.SelectType = TypeSelect.Default;
+
+                        if (_selectTile.Coordinate == selectTile.Coordinate)
+                        {
+                            _selectTile = null;
+
+                            _stateSelect = SelectState.NotSelect;
+                            break;
+                        }
+
+                        selectTile.TileState.SelectType = TypeSelect.Select;
+                        _selectTile = selectTile;
+
+                        if (selectTile.OccupiedUnit is not null)
+                        {
+                            _unitTile = selectTile.OccupiedUnit;
+                            UnitsManager.Instance.GeneratePossibleWays(_unitTile.Coordinate, _unitTile.GetMovementPoints());
+                            _stateSelect = SelectState.ChoicePossiblePathway;
+                        }
+                        else
+                        {
+                            _stateSelect = SelectState.Select;
+                        }
+
                         break;
                     }
                 case SelectState.ChoicePossiblePathway:
                     {
-                        if (UnitTile is not null)
+                        _selectTile.TileState.SelectType = TypeSelect.Default;
+
+                        if (_unitTile.Coordinate == selectTile.Coordinate)
                         {
-                            UnitsManager.Instance.MoveUnit(UnitTile, selectTile.Coordinate, (state) => _isProcessing = state);
-                            UnitTile = null;
+                            HidePossibleWays();
+                            _selectTile = null;
+                            _unitTile = null;
+
+                            _stateSelect = SelectState.NotSelect;
+                            break;
                         }
+
+                        _selectTile = selectTile;
+
+                        if (selectTile.TileState.SelectType != TypeSelect.PossibleWay)
+                        {
+                            HidePossibleWays();
+                            _unitTile = null;
+                            selectTile.TileState.SelectType = TypeSelect.Select;
+
+                            _stateSelect = SelectState.Select;
+                            break;
+                        }
+
+                        UnitsManager.Instance.MoveUnit(_unitTile, selectTile.Coordinate, (state) => _isProcessing = state);
+
+                        HidePossibleWays();
+                        _unitTile = null;
+
+                        _stateSelect = SelectState.NotSelect;
                         break;
                     }
             }

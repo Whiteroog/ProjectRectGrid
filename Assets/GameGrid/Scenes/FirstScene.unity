@@ -10570,6 +10570,9 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 8d61bb7100434dde8be499d6e4b6ff50, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectMask:
+    serializedVersion: 2
+    m_Bits: 8
 --- !u!1001 &2001599590
 PrefabInstance:
   m_ObjectHideFlags: 0
