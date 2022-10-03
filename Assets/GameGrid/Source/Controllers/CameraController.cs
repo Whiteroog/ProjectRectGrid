@@ -2,6 +2,7 @@ using System;
 using GameGrid.Source.Tiles;
 using UnityEngine;
 using UnityEngine.Events;
+using UnityEngine.UI;
 
 namespace GameGrid.Source.Controllers
 {
@@ -9,12 +10,14 @@ namespace GameGrid.Source.Controllers
     {
         [SerializeField] private float movementSpeed = 5.0f;
         [SerializeField] private float scrollSpeed = 10.0f;
-        
+
         [SerializeField] private float scrollSizeMin = 3.0f;
         [SerializeField] private float scrollSizeMax = 8.0f;
 
+        private bool _isDrag = false;
+
         public UnityEvent<Vector3> onClickTile;
-        
+
         private Camera _playerCamera;
 
         private void Awake()
@@ -29,9 +32,26 @@ namespace GameGrid.Source.Controllers
 
         private void Update()
         {
-            CameraMovement();
+            CameraMovementByMouse();
+            CameraMovementByKeyboard();
+
             CameraScrolling();
             OnClicked();
+        }
+
+        private void CameraMovementByMouse()
+        {
+
+        }
+
+        private void CameraMovementByKeyboard()
+        {
+            float horizontalMove = Input.GetAxis("Camera Horizontal");
+            float verticalMove = Input.GetAxis("Camera Vertical");
+
+            Vector3 deltaMovement = new Vector3(horizontalMove, verticalMove, 0.0f) * (movementSpeed * Time.deltaTime);
+
+            transform.position += deltaMovement;
         }
 
         private void CameraScrolling()
@@ -41,21 +61,11 @@ namespace GameGrid.Source.Controllers
 
             float orthographicSize = _playerCamera.orthographicSize;
             orthographicSize += deltaScroll;
-            
+
             _playerCamera.orthographicSize = orthographicSize;
             _playerCamera.orthographicSize = Mathf.Clamp(orthographicSize, scrollSizeMin, scrollSizeMax);
         }
 
-        private void CameraMovement()
-        {
-            float horizontalMove = Input.GetAxis("Camera Horizontal");
-            float verticalMove = Input.GetAxis("Camera Vertical");
-
-            Vector3 deltaMovement = new Vector3(horizontalMove, verticalMove, 0.0f) * (movementSpeed * Time.deltaTime);
-
-            transform.position += deltaMovement;
-        }
-        
         // ReSharper disable Unity.PerformanceAnalysis
         private void OnClicked()
         {

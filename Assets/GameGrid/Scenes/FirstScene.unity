@@ -5843,7 +5843,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: a740fb99046bd4f40ba905437ec89e8a, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementSpeed: 5
+  movementSpeedOnKeyboard: 5
+  movementSpeedOnMouse: 5
   scrollSpeed: 50
   scrollSizeMin: 2
   scrollSizeMax: 4
