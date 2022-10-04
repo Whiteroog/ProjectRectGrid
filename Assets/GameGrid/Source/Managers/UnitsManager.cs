@@ -40,7 +40,7 @@ namespace GameGrid.Source.Managers
                 return;
 
             onProcessing.Invoke(true);
-            StartCoroutine(unit.Move(pathway, () => onProcessing.Invoke(false)));
+            StartCoroutine(unit.Move(pathway, GroundTilesManager.Instance.FindTile(pathway[^1]).CostMovementUnit, () => onProcessing.Invoke(false)));
         }
 
         private Vector3Int[] GeneratePathway(Vector3Int targetCoord)
@@ -66,7 +66,7 @@ namespace GameGrid.Source.Managers
                 GroundTile showingTile = GroundTilesManager.Instance.FindTile(coord);
 
                 showingTile.TileState.SelectType = TypeSelect.PossibleWay;
-                showingTile.SetCostMovementUnitText(_costPathways[coord].ToString());
+                showingTile.CostMovementUnit = _costPathways[coord];
 
                 SelectManager.Instance.ShowPossibleWays(showingTile);
             }
@@ -74,9 +74,9 @@ namespace GameGrid.Source.Managers
 
         private void BreadthFirstSearch(Vector3Int startCoord, int movementPoints)
         {
-            Dictionary<Vector3Int, Vector3Int> visitedCoords = new Dictionary<Vector3Int, Vector3Int>();
-            Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
-            Queue<Vector3Int> coordsToVisit = new Queue<Vector3Int>();
+            Dictionary<Vector3Int, Vector3Int> visitedCoords = new();
+            Dictionary<Vector3Int, int> costSoFar = new();
+            Queue<Vector3Int> coordsToVisit = new();
             
             coordsToVisit.Enqueue(startCoord);
             costSoFar[startCoord] = 0;

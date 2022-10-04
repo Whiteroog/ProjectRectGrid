@@ -33,8 +33,10 @@ namespace GameGrid.Source.Tiles
 
         public int GetMovementPoints() => movementPoints;
 
-        public IEnumerator Move(Vector3Int[] pathway, Action onEndMove)
+        public IEnumerator Move(Vector3Int[] pathway, int spentCost, Action onEndMove)
         {
+            movementPoints -= spentCost;
+
             _unitAnimator.SetBool("IsMove", true);
 
             for (int i = 1; i < pathway.Length; i++)

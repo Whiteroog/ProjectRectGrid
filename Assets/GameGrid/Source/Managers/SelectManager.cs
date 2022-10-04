@@ -35,7 +35,7 @@ namespace GameGrid.Source.Managers
             foreach (GroundTile showingTile in _tilesShowingPossibleWays)
             {
                 showingTile.TileState.SelectType = TypeSelect.Default;
-                showingTile.SetCostMovementUnitText("");
+                showingTile.CostMovementUnit = 0;
             }
             
             _tilesShowingPossibleWays.Clear();

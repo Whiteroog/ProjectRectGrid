@@ -15,6 +15,8 @@ namespace GameGrid.Source.Tiles
         [SerializeField] private int cost = 1;
         [SerializeField] private bool isObstacle = false;
 
+        private int _costMovementUnit = 0;
+
         public UnitTile OccupiedUnit { set; get; }
         
         public TileState TileState { private set; get; }
@@ -29,6 +31,20 @@ namespace GameGrid.Source.Tiles
             get => base.Coordinate;
         }
 
+        public int CostMovementUnit
+        {
+            set
+            {
+                _costMovementUnit = value;
+
+                if (value != 0)
+                    costMovementUnitText.text = value.ToString();
+                else
+                    costMovementUnitText.text = "";
+            }
+            get => _costMovementUnit;
+        }
+
         private void Awake()
         {
             TileState = GetComponentInChildren<TileState>();
@@ -39,6 +55,5 @@ namespace GameGrid.Source.Tiles
 
         public bool IsObstacle() => isObstacle;
         public int GetCost() => cost;
-        public void SetCostMovementUnitText(string cost) => costMovementUnitText.text = cost;
     }
 }
