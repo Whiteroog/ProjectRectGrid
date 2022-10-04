@@ -7,8 +7,10 @@ namespace GameGrid.Source.Tiles
 {
     public class UnitTile : BaseRectTile
     {
-        [SerializeField] private int movementPoints = 5;
+        [SerializeField] private int defaultMovementPoints = 5;
         [SerializeField] private float movementSpeed = 2.0f;
+
+        private int _movementPoints = 0;
 
         private Animator _unitAnimator;
         private SpriteRenderer _spriteRenderer;
@@ -17,6 +19,11 @@ namespace GameGrid.Source.Tiles
         {
             _unitAnimator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
+        }
+
+        private void Start()
+        {
+            ResetMovementPoints();
         }
 
         public override Vector3Int Coordinate
@@ -31,11 +38,16 @@ namespace GameGrid.Source.Tiles
             }
         }
 
-        public int GetMovementPoints() => movementPoints;
+        public void ResetMovementPoints()
+        {
+            _movementPoints = defaultMovementPoints;
+        }
+
+        public int GetMovementPoints() => _movementPoints;
 
         public IEnumerator Move(Vector3Int[] pathway, int spentCost, Action onEndMove)
         {
-            movementPoints -= spentCost;
+            _movementPoints -= spentCost;
 
             _unitAnimator.SetBool("IsMove", true);
 

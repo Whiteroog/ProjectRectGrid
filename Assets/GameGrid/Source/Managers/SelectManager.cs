@@ -141,15 +141,7 @@ namespace GameGrid.Source.Managers
                         // single case when clicking on same tile
                         if (_unitTile.Coordinate == selectTile.Coordinate)
                         {
-                            // turn off all highlight
-                            HidePossibleWays();
-                            
-                            // clear all cached data
-                            _selectTile = null;
-                            _unitTile = null;
-
-                            // reset state
-                            _stateSelect = SelectState.NotSelect;
+                            ResetState();
                             break;
                         }
                         
@@ -187,6 +179,22 @@ namespace GameGrid.Source.Managers
                         break;
                     }
             }
+        }
+
+        public void ResetState()
+        {
+            // turn off past tile highlight
+            _selectTile.TileState.SelectType = TypeSelect.Default;
+
+            // turn off all highlight
+            HidePossibleWays();
+
+            // clear all cached data
+            _selectTile = null;
+            _unitTile = null;
+
+            // reset state
+            _stateSelect = SelectState.NotSelect;
         }
 
         enum SelectState

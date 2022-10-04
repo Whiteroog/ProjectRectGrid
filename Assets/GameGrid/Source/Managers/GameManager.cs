@@ -1,3 +1,4 @@
+using GameGrid.Source.Managers;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,5 +12,9 @@ public class GameManager : MonoBehaviour
         Instance = this;
     }
 
-
+    public void NextStep()
+    {
+        SelectManager.Instance.ResetState();
+        UnitsManager.Instance.ResetMovementPointsOfUnits();
+    }
 }

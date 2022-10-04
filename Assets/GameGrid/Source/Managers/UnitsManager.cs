@@ -32,6 +32,14 @@ namespace GameGrid.Source.Managers
             }
         }
 
+        public void ResetMovementPointsOfUnits()
+        {
+            foreach(UnitTile unit in _unitTiles)
+            {
+                unit.ResetMovementPoints();
+            }
+        }
+
         public void MoveUnit(UnitTile unit ,Vector3Int targetCoord, Action<bool> onProcessing)
         {
             Vector3Int[] pathway = GeneratePathway(targetCoord);
