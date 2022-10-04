@@ -5850,7 +5850,7 @@ MonoBehaviour:
   dragPanSpeed: 2
   scrollSizeMin: 3
   scrollSizeMax: 8
-  edgeScrollSize: 200
+  edgeScrollSizePercentOfScreen: 10
   onClickTile:
     m_PersistentCalls:
       m_Calls:

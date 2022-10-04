@@ -8,6 +8,9 @@ namespace GameGrid.Source.Tiles
     {
         [SerializeField] private Text coordText;
         [SerializeField] private Text costText;
+
+        [SerializeField] private Text costMovementUnitText;
+
         
         [SerializeField] private int cost = 1;
         [SerializeField] private bool isObstacle = false;
@@ -31,9 +34,11 @@ namespace GameGrid.Source.Tiles
             TileState = GetComponentInChildren<TileState>();
             
             costText.text = cost.ToString();
+            costMovementUnitText.text = "";
         }
 
         public bool IsObstacle() => isObstacle;
         public int GetCost() => cost;
+        public void SetCostMovementUnitText(string cost) => costMovementUnitText.text = cost;
     }
 }

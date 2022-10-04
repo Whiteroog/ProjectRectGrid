@@ -15,6 +15,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Road
       objectReference: {fileID: 0}
+    - target: {fileID: 3401939114373500696, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.w
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3401939114373500696, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.x
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3401939114373500696, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.y
+      value: 0
+      objectReference: {fileID: 0}
+    - target: {fileID: 3401939114373500696, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_SpriteTilingProperty.border.z
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 5199898462806408469, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_RootOrder
       value: 0
@@ -68,6 +84,18 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6283820950485354196, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419063083946905075, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419063083946905075, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419063083946905075, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_Color.r
       value: 1
       objectReference: {fileID: 0}

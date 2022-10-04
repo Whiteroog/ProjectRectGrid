@@ -83,6 +83,18 @@ PrefabInstance:
       propertyPath: isObstacle
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 7419063083946905075, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.b
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419063083946905075, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.g
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7419063083946905075, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: m_Color.r
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 8927073942856085766, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: m_Color.b
       value: 1

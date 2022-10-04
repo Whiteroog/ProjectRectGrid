@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using GameGrid.Source.Tiles;
+using GameGrid.Source.Utils;
 using UnityEngine;
 using UnityEngine.Tilemaps;
 
@@ -12,6 +13,7 @@ namespace GameGrid.Source.Managers
         public static UnitsManager Instance;
 
         private Dictionary<Vector3Int, Vector3Int> _pathways = new();
+        private Dictionary<Vector3Int, int> _costPathways = new();
 
         private UnitTile[] _unitTiles;
 
@@ -57,11 +59,20 @@ namespace GameGrid.Source.Managers
 
         public void GeneratePossibleWays(Vector3Int targetCoord, int movementPoints)
         {
-            _pathways = BreadthFirstSearch(targetCoord, movementPoints);
-            SelectManager.Instance.ShowPossibleWays(_pathways.Keys.ToArray()[1..]);
+            BreadthFirstSearch(targetCoord, movementPoints);
+
+            foreach (Vector3Int coord in _pathways.Keys.ToArray()[1..])
+            {
+                GroundTile showingTile = GroundTilesManager.Instance.FindTile(coord);
+
+                showingTile.TileState.SelectType = TypeSelect.PossibleWay;
+                showingTile.SetCostMovementUnitText(_costPathways[coord].ToString());
+
+                SelectManager.Instance.ShowPossibleWays(showingTile);
+            }
         }
 
-        private Dictionary<Vector3Int, Vector3Int> BreadthFirstSearch(Vector3Int startCoord, int movementPoints)
+        private void BreadthFirstSearch(Vector3Int startCoord, int movementPoints)
         {
             Dictionary<Vector3Int, Vector3Int> visitedCoords = new Dictionary<Vector3Int, Vector3Int>();
             Dictionary<Vector3Int, int> costSoFar = new Dictionary<Vector3Int, int>();
@@ -105,7 +116,8 @@ namespace GameGrid.Source.Managers
                 }
             }
 
-            return visitedCoords;
+            _pathways = visitedCoords;
+            _costPathways = costSoFar;
         }
     }
 }

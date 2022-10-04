@@ -25,16 +25,7 @@ namespace GameGrid.Source.Managers
             Instance = this;
         }
 
-        public void ShowPossibleWays(Vector3Int[] coordsForShow)
-        {
-            GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
-            foreach (Vector3Int coord in coordsForShow)
-            {
-                GroundTile showingTile = groundTilesManager.FindTile(coord);
-                showingTile.TileState.SelectType = TypeSelect.PossibleWay;
-                _tilesShowingPossibleWays.Add(showingTile);
-            }
-        }
+        public void ShowPossibleWays(GroundTile showingTile) => _tilesShowingPossibleWays.Add(showingTile);
 
         public void HidePossibleWays()
         {
@@ -44,6 +35,7 @@ namespace GameGrid.Source.Managers
             foreach (GroundTile showingTile in _tilesShowingPossibleWays)
             {
                 showingTile.TileState.SelectType = TypeSelect.Default;
+                showingTile.SetCostMovementUnitText("");
             }
             
             _tilesShowingPossibleWays.Clear();
