@@ -28,7 +28,8 @@ namespace GameGrid.Source.Managers
             foreach(UnitTile unit in _unitTiles)
             {
                 unit.Coordinate = groundTilesManager.Tilemap.LocalToCell(unit.transform.localPosition);
-                groundTilesManager.FindTile(unit.Coordinate).OccupiedUnit = unit;
+                GroundTile foundTile = groundTilesManager.FindTile(unit.Coordinate);
+                foundTile.OccupiedUnit = unit;
             }
         }
 

@@ -183,6 +183,8 @@ namespace GameGrid.Source.Managers
 
         public void ResetState()
         {
+            if (_selectTile is null) return;
+            
             // turn off past tile highlight
             _selectTile.TileState.SelectType = TypeSelect.Default;
 
