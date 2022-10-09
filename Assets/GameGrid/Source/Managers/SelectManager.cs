@@ -11,14 +11,14 @@ namespace GameGrid.Source.Managers
 
         [SerializeField] private LayerMask selectMask;
 
-        private bool _isProcessing = false;
-        
         private List<GroundTile> _tilesShowingPossibleWays = new();
 
         private SelectState _stateSelect = SelectState.NotSelect;
 
         private GroundTile _selectTile;
         private UnitTile _unitTile;
+
+        public bool IsProcessing { set; get; } = false;
 
         private void Awake()
         {
@@ -44,7 +44,7 @@ namespace GameGrid.Source.Managers
         // Event from CameraController
         public void OnSelect(Vector3 clickPosition)
         {
-            if (_isProcessing)
+            if (IsProcessing)
                 return;
 
             GroundTile selectTile = Physics2D.Raycast(clickPosition, Vector2.zero, Mathf.Infinity, selectMask)
@@ -169,7 +169,7 @@ namespace GameGrid.Source.Managers
                         
                         // if clicked on highlight tile (possible way)
 
-                        UnitsManager.Instance.MoveUnit(_unitTile, selectTile.Coordinate, (state) => _isProcessing = state);
+                        UnitsManager.Instance.MoveUnit(_unitTile, selectTile.Coordinate);
 
                         HidePossibleWays();
                         _unitTile = null;

@@ -8,19 +8,20 @@ namespace GameGrid.Source.Tiles
     public class UnitTile : BaseRectTile
     {
         [SerializeField] private int defaultMovementPoints = 5;
+        
         [SerializeField] private float movementSpeed = 2.0f;
-
-        private int _movementPoints = 0;
-
+        
         private Animator _unitAnimator;
         private SpriteRenderer _spriteRenderer;
+
+        private int _movementPoints = 0;
 
         private void Awake()
         {
             _unitAnimator = GetComponent<Animator>();
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
-
+        
         private void Start()
         {
             ResetMovementPoints();
@@ -31,32 +32,41 @@ namespace GameGrid.Source.Tiles
             set
             {
                 GroundTilesManager groundTilesManager = GroundTilesManager.Instance;
-            
                 groundTilesManager.FindTile(base.Coordinate).OccupiedUnit = null;
                 base.Coordinate = value;
                 groundTilesManager.FindTile(value).OccupiedUnit = this;
             }
         }
 
-        public void ResetMovementPoints()
-        {
-            _movementPoints = defaultMovementPoints;
-        }
-
+        public void ResetMovementPoints() => _movementPoints = defaultMovementPoints;
         public int GetMovementPoints() => _movementPoints;
 
-        public IEnumerator Move(Vector3Int[] pathway, int spentCost, Action onEndMove)
+        public void Move(Vector3Int[] pathway, int spentCost)
+        {
+            StartCoroutine(MoveAnimation(pathway, () => MoveTo(pathway[^1], spentCost)));
+        }
+        
+        private void MoveTo(Vector3Int coordinate, int spentCost)
         {
             _movementPoints -= spentCost;
+            Coordinate = coordinate;
+            
+            SelectManager.Instance.IsProcessing = false;
+        }
 
-            _unitAnimator.SetBool("IsMove", true);
+        private IEnumerator MoveAnimation(Vector3Int[] pathway, Action endAnimation)
+        {
+            _unitAnimator.SetBool("IsMoving", true);
 
             for (int i = 1; i < pathway.Length; i++)
             {
                 Vector3 start = pathway[i - 1];
                 Vector3 end = pathway[i];
 
-                DirectionRenderSprite(start, end);
+                float side = Vector3.Dot((end - start).normalized, Vector3.right);
+                
+                if (!Mathf.Approximately(side, 0.0f))
+                    _spriteRenderer.flipX = side < 0.0f;
 
                 for (float t = 0; t < 1; t += Time.deltaTime * movementSpeed)
                 {
@@ -65,20 +75,9 @@ namespace GameGrid.Source.Tiles
                 }
             }
 
-            _unitAnimator.SetBool("IsMove", false);
-            
-            Coordinate = pathway[^1]; // end array
-            
-            onEndMove?.Invoke();
+            _unitAnimator.SetBool("IsMoving", false);
 
-            void DirectionRenderSprite(Vector3 start, Vector3 end)
-            {              
-                float side = Vector3.Dot((end - start).normalized, Vector3.right);
-                
-                if (!Mathf.Approximately(side, 0.0f))
-                    _spriteRenderer.flipX = side < 0.0f;
-            }
+            endAnimation?.Invoke();
         }
-
     }
 }

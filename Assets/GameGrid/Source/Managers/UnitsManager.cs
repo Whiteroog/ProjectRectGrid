@@ -41,15 +41,16 @@ namespace GameGrid.Source.Managers
             }
         }
 
-        public void MoveUnit(UnitTile unit ,Vector3Int targetCoord, Action<bool> onProcessing)
+        public void MoveUnit(UnitTile unit ,Vector3Int targetCoord)
         {
             Vector3Int[] pathway = GeneratePathway(targetCoord);
 
             if (pathway.Length == 1)
                 return;
 
-            onProcessing.Invoke(true);
-            StartCoroutine(unit.Move(pathway, GroundTilesManager.Instance.FindTile(pathway[^1]).CostMovementUnit, () => onProcessing.Invoke(false)));
+            SelectManager.Instance.IsProcessing = true;
+            
+            unit.Move(pathway, GroundTilesManager.Instance.FindTile(pathway[^1]).CostMovementUnit);
         }
 
         private Vector3Int[] GeneratePathway(Vector3Int targetCoord)
