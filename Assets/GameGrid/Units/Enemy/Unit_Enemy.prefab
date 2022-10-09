@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 1450702754045216791}
   - component: {fileID: 5509248194418541943}
   m_Layer: 0
-  m_Name: Unit Enemy
+  m_Name: Unit_Enemy
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,7 +96,7 @@ Animator:
   m_GameObject: {fileID: 2797219147112936641}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 3ed89423ae27c53478b291e8b44a5554, type: 2}
+  m_Controller: {fileID: 9100000, guid: 206447f847d84b3478fe8307b9faf447, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0

@@ -13,7 +13,7 @@ GameObject:
   - component: {fileID: 4562771494572912926}
   - component: {fileID: 2755522707816595045}
   m_Layer: 0
-  m_Name: Unit Player
+  m_Name: Unit_Hero
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -96,7 +96,7 @@ Animator:
   m_GameObject: {fileID: 1463005011209680588}
   m_Enabled: 1
   m_Avatar: {fileID: 0}
-  m_Controller: {fileID: 9100000, guid: 11ae8bb4d856db54b8c2811dd43553c2, type: 2}
+  m_Controller: {fileID: 9100000, guid: 1da27c444cfd45d40811f5a42780497f, type: 2}
   m_CullingMode: 0
   m_UpdateMode: 0
   m_ApplyRootMotion: 0
@@ -118,5 +118,5 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 936bb45c01bb4a1693f81e2367a9ceb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  movementPoints: 5
+  defaultMovementPoints: 5
   movementSpeed: 2
