@@ -17,6 +17,7 @@ namespace GameGrid.Source.Controllers
         [SerializeField] private float scrollSizeMin = 3.0f;
         [SerializeField] private float scrollSizeMax = 8.0f;
         
+        [SerializeField] private bool edgeScrollActive = false;
         
         [SerializeField] private int edgeScrollSizePercentOfScreen = 10;
         private float _edgeScrollSize = 0.0f;
@@ -57,7 +58,7 @@ namespace GameGrid.Source.Controllers
             deltaMovement = CameraPanMovement();
             if(!_isDragPanMoveActive)
             {
-                deltaMovement = deltaMovement == Vector3.zero ? CameraMovementByEdges() : deltaMovement;
+                deltaMovement = edgeScrollActive && deltaMovement == Vector3.zero ? CameraMovementByEdges() : deltaMovement;
                 deltaMovement = deltaMovement == Vector3.zero ? CameraMovementByKeys() : deltaMovement;
             }
 

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using GameGrid.Source.Systems;
 using GameGrid.Source.Tiles;
 using GameGrid.Source.Utils;
 using UnityEngine;
@@ -12,8 +13,8 @@ namespace GameGrid.Source.Managers
     {
         public static UnitsManager Instance;
 
-        private Dictionary<Vector3Int, Vector3Int> _pathways = new();
-        private Dictionary<Vector3Int, int> _costPathways = new();
+        private Dictionary<GroundTile, GroundTile> _pathways = new();
+        private Dictionary<GroundTile, int> _costPathways = new();
 
         private UnitTile[] _unitTiles;
 
@@ -27,7 +28,7 @@ namespace GameGrid.Source.Managers
 
             foreach(UnitTile unit in _unitTiles)
             {
-                unit.Coordinate = groundTilesManager.Tilemap.LocalToCell(unit.transform.localPosition);
+                unit.Coordinate = GridSystem.Instance.ConvertToGridCoordinate(unit.transform.localPosition);
                 GroundTile foundTile = groundTilesManager.FindTile(unit.Coordinate);
                 foundTile.OccupiedUnit = unit;
             }
@@ -41,22 +42,22 @@ namespace GameGrid.Source.Managers
             }
         }
 
-        public void MoveUnit(UnitTile unit ,Vector3Int targetCoord)
+        public void MoveUnit(UnitTile unit ,GroundTile targetTile)
         {
-            Vector3Int[] pathway = GeneratePathway(targetCoord);
+            GroundTile[] pathway = GeneratePathway(targetTile);
 
             if (pathway.Length == 1)
                 return;
 
             SelectManager.Instance.IsProcessing = true;
             
-            unit.Move(pathway, GroundTilesManager.Instance.FindTile(pathway[^1]).CostMovementUnit);
+            unit.Move(pathway, pathway[^1].CostMovementUnit);
         }
 
-        private Vector3Int[] GeneratePathway(Vector3Int targetCoord)
+        private GroundTile[] GeneratePathway(GroundTile targetTile)
         {
-            Stack<Vector3Int> pathway = new Stack<Vector3Int>();
-            pathway.Push(targetCoord);
+            Stack<GroundTile> pathway = new Stack<GroundTile>();
+            pathway.Push(targetTile);
 
             //        current way -> past way
             while (pathway.Peek() != _pathways[pathway.Peek()])
@@ -67,35 +68,33 @@ namespace GameGrid.Source.Managers
             return pathway.ToArray();
         }
 
-        public void GeneratePossibleWays(Vector3Int targetCoord, int movementPoints)
+        public void GeneratePossibleWays(GroundTile targetTile, int movementPoints)
         {
-            BreadthFirstSearch(targetCoord, movementPoints);
+            BreadthFirstSearch(targetTile, movementPoints);
 
-            foreach (Vector3Int coord in _pathways.Keys.ToArray()[1..])
+            foreach (GroundTile tile in _pathways.Keys.ToArray()[1..])
             {
-                GroundTile showingTile = GroundTilesManager.Instance.FindTile(coord);
+                tile.TileState.SelectType = TypeSelect.PossibleWay;
+                tile.CostMovementUnit = _costPathways[tile];
 
-                showingTile.TileState.SelectType = TypeSelect.PossibleWay;
-                showingTile.CostMovementUnit = _costPathways[coord];
-
-                SelectManager.Instance.ShowPossibleWays(showingTile);
+                SelectManager.Instance.ShowPossibleWays(tile);
             }
         }
 
-        private void BreadthFirstSearch(Vector3Int startCoord, int movementPoints)
+        private void BreadthFirstSearch(GroundTile startTile, int movementPoints)
         {
-            Dictionary<Vector3Int, Vector3Int> visitedCoords = new();
-            Dictionary<Vector3Int, int> costSoFar = new();
-            Queue<Vector3Int> coordsToVisit = new();
+            Dictionary<GroundTile, GroundTile> visitedTiles = new();
+            Dictionary<GroundTile, int> costSoFar = new();
+            Queue<GroundTile> tilesToVisit = new();
             
-            coordsToVisit.Enqueue(startCoord);
-            costSoFar[startCoord] = 0;
-            visitedCoords[startCoord] = startCoord;
+            tilesToVisit.Enqueue(startTile);
+            costSoFar[startTile] = 0;
+            visitedTiles[startTile] = startTile;
 
-            while (coordsToVisit.Count > 0)
+            while (tilesToVisit.Count > 0)
             {
-                Vector3Int currentCoord = coordsToVisit.Dequeue();
-                foreach (GroundTile neighbourTile in GroundTilesManager.Instance.GetNeighboursFor(currentCoord))
+                GroundTile currentTile = tilesToVisit.Dequeue();
+                foreach (GroundTile neighbourTile in GroundTilesManager.Instance.GetNeighboursFor(currentTile.Coordinate))
                 {
                     if (neighbourTile is null)
                         continue;
@@ -104,29 +103,27 @@ namespace GameGrid.Source.Managers
                         continue;
 
                     int nodeCost = neighbourTile.GetCost();
-                    int currentCost = costSoFar[currentCoord];
+                    int currentCost = costSoFar[currentTile];
                     int newCost = currentCost + nodeCost;
-
-                    Vector3Int neighbourCoord = neighbourTile.Coordinate;
 
                     if (newCost <= movementPoints)
                     {
-                        if (!visitedCoords.ContainsKey(neighbourCoord))
+                        if (!visitedTiles.ContainsKey(neighbourTile))
                         {
-                            visitedCoords[neighbourCoord] = currentCoord;
-                            costSoFar[neighbourCoord] = newCost;
-                            coordsToVisit.Enqueue(neighbourCoord);
+                            visitedTiles[neighbourTile] = currentTile;
+                            costSoFar[neighbourTile] = newCost;
+                            tilesToVisit.Enqueue(neighbourTile);
                         }
-                        else if (costSoFar[neighbourCoord] > newCost)
+                        else if (costSoFar[neighbourTile] > newCost)
                         {
-                            costSoFar[neighbourCoord] = newCost;
-                            visitedCoords[neighbourCoord] = currentCoord;
+                            costSoFar[neighbourTile] = newCost;
+                            visitedTiles[neighbourTile] = currentTile;
                         }
                     }
                 }
             }
 
-            _pathways = visitedCoords;
+            _pathways = visitedTiles;
             _costPathways = costSoFar;
         }
     }

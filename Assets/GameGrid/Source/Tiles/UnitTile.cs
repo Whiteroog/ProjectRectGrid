@@ -41,27 +41,27 @@ namespace GameGrid.Source.Tiles
         public void ResetMovementPoints() => _movementPoints = defaultMovementPoints;
         public int GetMovementPoints() => _movementPoints;
 
-        public void Move(Vector3Int[] pathway, int spentCost)
+        public void Move(GroundTile[] pathway, int spentCost)
         {
             StartCoroutine(MoveAnimation(pathway, () => MoveTo(pathway[^1], spentCost)));
         }
         
-        private void MoveTo(Vector3Int coordinate, int spentCost)
+        private void MoveTo(GroundTile targetTile, int spentCost)
         {
             _movementPoints -= spentCost;
-            Coordinate = coordinate;
+            Coordinate = targetTile.Coordinate;
             
             SelectManager.Instance.IsProcessing = false;
         }
 
-        private IEnumerator MoveAnimation(Vector3Int[] pathway, Action endAnimation)
+        private IEnumerator MoveAnimation(GroundTile[] pathway, Action endAnimation)
         {
             _unitAnimator.SetBool("IsMoving", true);
 
             for (int i = 1; i < pathway.Length; i++)
             {
-                Vector3 start = pathway[i - 1];
-                Vector3 end = pathway[i];
+                Vector3 start = pathway[i - 1].transform.localPosition;
+                Vector3 end = pathway[i].transform.localPosition;
 
                 float side = Vector3.Dot((end - start).normalized, Vector3.right);
                 
@@ -73,6 +73,8 @@ namespace GameGrid.Source.Tiles
                     transform.localPosition = Vector3.Lerp(start, end, t);
                     yield return null;
                 }
+
+                transform.localPosition = end;
             }
 
             _unitAnimator.SetBool("IsMoving", false);

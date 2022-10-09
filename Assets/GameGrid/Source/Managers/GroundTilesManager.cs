@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using GameGrid.Source.Systems;
 using GameGrid.Source.Tiles;
 using UnityEngine;
 using UnityEngine.Tilemaps;
@@ -11,17 +12,13 @@ namespace GameGrid.Source.Managers
 
         private Dictionary<Vector3Int, GroundTile> _groundTiles = new();
 
-        public Tilemap Tilemap { private set; get; }
-
         private void Awake()
         {
             Instance = this;
 
-            Tilemap = GetComponent<Tilemap>();
-
             foreach (GroundTile ground in GetComponentsInChildren<GroundTile>())
             {
-                ground.Coordinate = Tilemap.LocalToCell(ground.transform.localPosition);
+                ground.Coordinate = GridSystem.Instance.ConvertToGridCoordinate(ground.transform.localPosition);
                 _groundTiles[ground.Coordinate] = ground;
             }
         }
