@@ -80,6 +80,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 6634243046837346324, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
+      propertyPath: cost
+      value: 8
+      objectReference: {fileID: 0}
+    - target: {fileID: 6634243046837346324, guid: 1fb25278bd23e9a4a9de6327b2f6c14d, type: 3}
       propertyPath: isObstacle
       value: 1
       objectReference: {fileID: 0}

@@ -14,7 +14,15 @@ public class GameManager : MonoBehaviour
 
     public void NextStep()
     {
+        StartCoroutine(DelayNextStepProcessing());
         SelectManager.Instance.ResetState();
         UnitsManager.Instance.ResetMovementPointsOfUnits();
+    }
+
+    private IEnumerator DelayNextStepProcessing()
+    {
+        SelectManager.Instance.IsProcessing = true;
+        yield return new WaitForSeconds(1);
+        SelectManager.Instance.IsProcessing = false;
     }
 }
