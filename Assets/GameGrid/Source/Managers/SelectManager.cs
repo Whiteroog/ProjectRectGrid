@@ -47,10 +47,13 @@ namespace GameGrid.Source.Managers
         {
             if (IsProcessing)
                 return;
+            
+            GroundTile selectTile = Physics2D.Raycast(clickPosition, Vector2.zero, Mathf.Infinity, selectMask)
+                .collider?.gameObject.GetComponent<GroundTile>();
 
-            clickPosition.z = GroundTilesManager.Instance.transform.localPosition.z;
-
-            GroundTile selectTile = GroundTilesManager.Instance.FindTile(GridSystem.Instance.ConvertToGridCoordinate(clickPosition));
+            /* Old version selecting tile on ground */
+            // clickPosition.z = GroundTilesManager.Instance.transform.localPosition.z;
+            // GroundTile selectTile = GroundTilesManager.Instance.FindTile(GridSystem.Instance.ConvertToGridCoordinate(clickPosition));
 
             if (selectTile is null)
                 return;

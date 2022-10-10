@@ -11,6 +11,7 @@ GameObject:
   - component: {fileID: 5199898462806408469}
   - component: {fileID: -229363741495947192}
   - component: {fileID: 6634243046837346324}
+  - component: {fileID: -4979163576928319554}
   m_Layer: 3
   m_Name: BaseTilePrefab
   m_TagString: Untagged
@@ -103,6 +104,32 @@ MonoBehaviour:
   costMovementUnitText: {fileID: 7419063083946905075}
   cost: 1
   isObstacle: 0
+--- !u!61 &-4979163576928319554
+BoxCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 151320813615067628}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0.015625, y: 0.015625, z: 0.015625, w: 0.015625}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  serializedVersion: 2
+  m_Size: {x: 1, y: 1}
+  m_EdgeRadius: 0
 --- !u!1 &925191939197635635
 GameObject:
   m_ObjectHideFlags: 0
