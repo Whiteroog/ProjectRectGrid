@@ -1,2 +1,2 @@
-# GameGrid
+# Project using Rectangle grid
  
